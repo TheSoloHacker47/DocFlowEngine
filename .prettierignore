@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+.next/
+out/
+
+# Build outputs
+build/
+dist/
+
+# Environment files
+.env*
+
+# IDE and editor files
+.vscode/
+.idea/
+
+# Git
+.git/
+
+# TaskMaster files
+.taskmaster/
+.clinerules/
+.cursor/
+.github/
+.roo/
+.trae/
+.windsurf/
+
+# Generated files
+*.log
+*.lock
+package-lock.json
+
+# Markdown files in rule directories
+**/rules/*.md
+**/instructions/*.md
+AGENTS.md
+CLAUDE.md
+.roomodes 

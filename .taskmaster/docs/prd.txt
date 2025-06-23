@@ -1,0 +1,113 @@
+<context>
+Overview
+DocFlowEngine is a modern, sleek, and fast single-purpose web tool that provides high-quality PDF to Microsoft Word conversions. It solves the common user problem of needing to convert PDF files into editable .docx formats without losing formatting, paying for expensive software, or compromising personal data privacy.
+The target audience is broad, including students, administrative professionals, and casual users who are frequently frustrated by existing online tools that are slow, ad-riddled, have hidden file limits, produce poor-quality conversions, or raise security concerns by uploading sensitive files to servers.
+DocFlowEngine's value is rooted in its three core principles:
+Privacy First: All conversions happen directly in the user's browser (client-side). Files are never uploaded to a server, guaranteeing 100% privacy.
+Quality Conversion: Focuses on delivering the most accurate conversion possible for an online tool, preserving the original document's structure.
+Superior User Experience: A clean, minimalist, and ad-friendly interface that is fast, intuitive, and free of frustrating pop-ups, registrations, or upsells.
+Core Features
+For the MVP, the feature set is intentionally minimal to ensure a rapid path to a high-quality, stable launch.
+1. Simple File Upload
+What it does: Allows the user to select a PDF file from their local device for conversion.
+Why it's important: This is the primary entry point for the tool. It must be obvious, accessible, and frictionless to encourage immediate use.
+How it works at a high level: The UI will feature a prominent component that accepts files via a traditional file selection dialog or a modern drag-and-drop interface.
+2. Client-Side Conversion Engine
+What it does: Reads the structure and content of the user-provided PDF and reconstructs it into a .docx file format.
+Why it's important: This is the core functionality and the primary value proposition. Its quality and privacy-preserving nature (client-side) are the key differentiators.
+How it works at a high level: The tool will use the pdf.js library to parse the PDF file in the browser. It will then iterate through the parsed content (text, basic structure), feeding it into the docx.js library to generate a Word document in memory.
+3. Real-Time User Feedback
+What it does: Clearly communicates the status of the conversion process to the user.
+Why it's important: Prevents user confusion and abandonment. A user needs to know if the tool is working, processing, has succeeded, or has failed.
+How it works at a high level: Upon file upload, the UI will change to show a "Processing..." state, possibly with a loading indicator. On completion, it will change to a "Success!" state and activate the download feature.
+4. One-Click Download
+What it does: Enables the user to save the generated .docx file to their device.
+Why it's important: This completes the user journey and delivers the final value. The action must be clear and immediate.
+How it works at a high level: Once the conversion is complete, a "Download .docx" button will become active. Clicking this button will trigger a browser download of the file generated and stored in the browser's memory.
+User Experience
+The user experience is designed to be modern, intuitive, and trustworthy.
+User Personas
+Alex, The Student: Alex is a 20-year-old university student who frequently receives lecture notes and assignment guidelines as PDFs. They need to copy text and tables into their own study notes and reports. They are often working on a personal laptop, are tech-savvy, but have a limited budget and are wary of sites that ask for credit card info or spam them with emails.
+Key User Flows
+The user journey is linear and designed to be completed in under 30 seconds.
+Landing: User arrives on the homepage, which is the tool itself. They are met with a clear heading and a prominent file uploader.
+Upload: User drags their PDF file onto the dropzone or clicks to select it.
+Processing: The UI immediately provides visual feedback that the file is being processed. The upload button is replaced with a loading animation and status text.
+Completion & Download: Within seconds, the UI updates to a success message, and a large, active "Download File" button appears.
+Exit/Repeat: The user downloads the file. A "Convert Another File" button allows them to instantly reset the tool and start again.
+UI/UX Considerations
+Look & Feel: Modern, sleek, minimalist. Ample white space. A simple, elegant color palette (e.g., shades of gray, a single accent color for buttons).
+Layout: A single-column, centered layout on desktop and mobile. The tool will be front and center.
+Ad-Friendly, Not Ad-Hostile: AdSense slots will be placed in standard, non-intrusive locations (e.g., top leaderboard banner, side skyscraper). There will be no pop-ups, pop-unders, or ads styled to look like download buttons.
+Typography: Clean, sans-serif font for readability (e.g., Inter, Poppins).
+Clarity: All button text and instructions will be direct and unambiguous (e.g., "Select PDF File," "Download Word Document").
+</context>
+<PRD>
+Technical Architecture
+System Components
+The architecture is 100% frontend, with no backend application server.
+Client (Browser): The single point of interaction. All logic, processing, and storage happens here temporarily.
+Frontend Application: A Single Page Application (SPA) responsible for UI, state management, and orchestrating the conversion process.
+Frontend Stack
+Framework: Next.js (for its powerful static site generation for content pages and robust React ecosystem).
+Language: TypeScript (for type safety and better maintainability).
+Styling: Tailwind CSS (for rapid, utility-first UI development).
+Core Libraries:
+pdf.js (by Mozilla) for PDF parsing.
+docx.js for generating .docx files.
+Data Models
+There are no server-side data models. All data is transient and exists only within the client's session.
+APIs and Integrations
+Primary Integration: Google AdSense for monetization. This involves adding a JavaScript snippet to the site <head> and placing ad components in the UI.
+Infrastructure Requirements
+Hosting: Vercel. Its free tier is sufficient for the MVP. It integrates seamlessly with Next.js and provides CI/CD, a global CDN, and HTTPS out of the box.
+Source Control: GitHub.
+Development Roadmap
+MVP Requirements (Phase 1)
+This is the scope for the initial launch. The goal is a functional, stable, and professional-looking product.
+Site Structure:
+Setup Next.js project with TypeScript and Tailwind CSS.
+Create static, content-filled pages: /about, /privacy-policy, /terms-of-service, /contact.
+Create a main layout component containing the site header, footer, and navigation.
+Converter UI:
+Build the main tool interface on the homepage (/).
+Implement the file uploader component (supporting click-to-select and drag-and-drop).
+Core Conversion Logic:
+Integrate pdf.js and docx.js.
+Implement the foundational conversion logic to handle basic text elements (paragraphs, line breaks). Note: MVP will ignore complex elements like images, tables, and multi-column layouts to ensure stability.
+UI State Management:
+Implement visual states for: idle, file-selected, processing, success, error.
+Create loading indicators and success/error messages.
+Finalization:
+Implement the file download functionality.
+Designate and implement placeholder slots for AdSense banners.
+Future Enhancements (Post-MVP / Phase 2+)
+Conversion Quality V2: Add support for images, tables, fonts, and basic styling.
+OCR for Scanned PDFs: Integrate an open-source, client-side OCR library (e.g., Tesseract.js) as a major feature update.
+New Formats: Expand to PDF to Excel, PDF to PPT, etc.
+Performance Optimization: Analyze and improve conversion speed for very large files.
+Logical Dependency Chain
+This is the build order to get to a visible, working prototype as quickly as possible.
+Foundation First: (Task 1) Set up the Next.js project and build the static pages (/about, /privacy-policy, etc.) with final text content. This creates the "shell" of a legitimate website, which can be deployed to Vercel immediately.
+Visual Scaffolding: (Task 2) Build the UI for the main converter tool on the homepage. This includes the uploader and buttons. At this stage, it will be non-functional but visually complete.
+Engine Integration: (Task 3) Integrate pdf.js and docx.js. Create a "black box" function that accepts a file object and returns a docx blob. Test this logic in isolation with a simple, text-only PDF. This is the most complex technical task.
+Connecting the Wires: (Task 4) Connect the UI from Task 2 to the engine from Task 3. Implement the state management (loading, success) and trigger the download functionality.
+Polish and Deploy: (Task 5) Refine all styling, ensure mobile responsiveness, and perform final testing before submitting to AdSense.
+Risks and Mitigations
+Risk: The quality of the PDF-to-Word conversion is poor, even for simple text.
+Mitigation: The MVP scope is intentionally limited to basic text. We will explicitly state on the homepage that the MVP works best with simple, text-based documents. We will dedicate post-launch development to improving quality based on user feedback.
+Risk: Google AdSense approval is denied or delayed.
+Mitigation: We will build out all required static pages with high-quality, unique content before applying. The strong, user-centric privacy policy is a key asset. We will ensure the site is fully functional and indexed by Google prior to application.
+Risk: Scope creep delays the MVP launch.
+Mitigation: Adhere strictly to the features defined in the "MVP Requirements" section. All new ideas are to be logged in a backlog for "Future Enhancements" without exception.
+Risk: Performance issues with large PDFs slowing down the user's browser.
+Mitigation: The MVP will be tested with reasonably sized files (e.g., up to 50 pages). We will add a small disclaimer: "For best results, use files under 10MB." Performance optimization for very large files is a post-MVP task.
+Appendix
+Research Findings
+High search volume (~3M/mo for "pdf to word") indicates strong, sustained demand.
+Reddit and other forums show user frustration with existing tools' formatting errors, hidden paywalls, and privacy invasions.
+A client-side-only approach is a significant technical and marketing differentiator that directly addresses user privacy concerns.
+Technical Specifications
+The conversion engine will initially focus on extracting text nodes from the parsed PDF. It will attempt to preserve paragraphs and line breaks.
+Any images, tables, or vector graphics encountered in the PDF will be ignored by the MVP engine to prevent conversion errors. The output will be text-only.
+</PRD>

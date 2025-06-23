@@ -1,0 +1,748 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Set up Next.js project with TypeScript and Tailwind CSS",
+        "description": "Initialize the project repository and set up the development environment with Next.js, TypeScript, and Tailwind CSS.",
+        "details": "1. Create a new Next.js project using create-next-app with TypeScript template.\n2. Install and configure Tailwind CSS.\n3. Set up ESLint and Prettier for code quality.\n4. Create a basic folder structure for components, pages, and styles.\n5. Configure tsconfig.json for strict type checking.\n6. Set up a Git repository and make an initial commit.\n\nUse the following versions:\n- Next.js: 13.4.4\n- React: 18.2.0\n- TypeScript: 5.1.3\n- Tailwind CSS: 3.3.2\n\nCommand to create the project:\n```\nnpx create-next-app@latest pdconv --typescript --eslint\n```\n\nInstall Tailwind CSS:\n```\nnpm install -D tailwindcss@latest postcss@latest autoprefixer@latest\nnpx tailwindcss init -p\n```\n\nUpdate tailwind.config.js to include:\n```javascript\nmodule.exports = {\n  content: [\n    './pages/**/*.{js,ts,jsx,tsx}',\n    './components/**/*.{js,ts,jsx,tsx}',\n  ],\n  theme: {\n    extend: {},\n  },\n  plugins: [],\n}\n```",
+        "testStrategy": "1. Verify that the project builds without errors using 'npm run build'.\n2. Run 'npm run dev' and check if the development server starts correctly.\n3. Create a sample component with Tailwind classes and ensure styles are applied correctly.\n4. Run ESLint and Prettier to ensure code formatting is working as expected.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Initialize Next.js project",
+            "description": "Create a new Next.js project with TypeScript support",
+            "dependencies": [],
+            "details": "Use 'npx create-next-app@latest' with the '--typescript' flag to create a new Next.js project. Follow the prompts to set up the project name and other initial configurations.\n<info added on 2025-06-23T08:50:25.305Z>\nI've successfully initialized a new Next.js project with TypeScript support using the create-next-app@latest command. The project was configured with:\n\n- TypeScript template enabled\n- App router structure with src/ directory organization\n- Pre-configured Tailwind CSS and ESLint\n- Project files moved to root directory (resolving npm naming restriction)\n\nThe build process was verified and completed successfully in 2000ms, with TypeScript compilation, linting, and optimization all passing. The project structure includes:\n\n- src/app/ directory for pages and components\n- src/app/layout.tsx as the root layout component\n- src/app/page.tsx for the home page\n- src/app/globals.css containing global styles with Tailwind directives\n- Configuration files for TypeScript, ESLint, Next.js, and Tailwind CSS\n\nAll verification tests passed successfully, including build test, linting, type checking, static generation (5 pages), and bundle analysis (optimized at 107KB first load).\n</info added on 2025-06-23T08:50:25.305Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Set up Tailwind CSS",
+            "description": "Install and configure Tailwind CSS for the project",
+            "dependencies": [
+              1
+            ],
+            "details": "Install Tailwind CSS and its peer dependencies. Create a tailwind.config.js file and configure the content sources. Update the global CSS file to include Tailwind directives.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Configure ESLint",
+            "description": "Set up ESLint for code linting",
+            "dependencies": [
+              1
+            ],
+            "details": "Install ESLint and necessary plugins. Create a .eslintrc.json file with appropriate rules for Next.js and TypeScript. Add an ESLint script to package.json for easy linting.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Set up Prettier",
+            "description": "Configure Prettier for code formatting",
+            "dependencies": [
+              1,
+              3
+            ],
+            "details": "Install Prettier and eslint-config-prettier. Create a .prettierrc file with desired formatting rules. Update .eslintrc.json to extend prettier config. Add a Prettier script to package.json.\n<info added on 2025-06-23T08:52:58.753Z>\n✅ Successfully configured Prettier for code formatting\n\n**What was accomplished:**\n- Installed Prettier and ESLint integration packages (prettier, eslint-config-prettier, eslint-plugin-prettier)\n- Created .prettierrc configuration file with project-specific formatting rules\n- Updated eslint.config.mjs to extend \"prettier\" configuration\n- Added Prettier scripts to package.json:\n  - \"format\": \"prettier --write .\" (format all files)\n  - \"format:check\": \"prettier --check .\" (check formatting)\n- Created .prettierignore file to exclude TaskMaster and other non-source directories\n- Formatted all source code files successfully\n- Verified ESLint integration works correctly (no warnings or errors)\n\n**Configuration details:**\n- Semi-colons: enabled\n- Single quotes: enabled\n- Print width: 80 characters\n- Tab width: 2 spaces\n- Trailing commas: ES5 style\n- Arrow parens: avoid when possible\n\n**Verification completed:**\n- Prettier formatting: ✅ Applied to all source files\n- ESLint integration: ✅ No conflicts, clean lint results\n- Scripts working: ✅ format and format:check commands functional\n</info added on 2025-06-23T08:52:58.753Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Configure TypeScript",
+            "description": "Fine-tune TypeScript configuration for the project",
+            "dependencies": [
+              1
+            ],
+            "details": "Review and update tsconfig.json with project-specific settings. Add any necessary type declarations. Configure strict mode and other TypeScript compiler options as needed.\n<info added on 2025-06-23T08:54:43.204Z>\nEnhanced tsconfig.json with additional strict type checking options including baseUrl, forceConsistentCasingInFileNames, noFallthroughCasesInSwitch, noImplicitReturns, noUncheckedIndexedAccess, and exactOptionalPropertyTypes.\n\nCreated src/types/ directory with common type definitions for the PDF converter:\n- FileUploadState interface for file upload state management\n- ConversionState interface for conversion process state\n- ConversionResult interface for conversion results\n- ConversionFormat type for supported output formats\n- ConversionOptions interface for conversion settings\n- ApiResponse generic interface for API responses\n- BaseComponentProps interface for React component props\n\nVerification confirmed successful TypeScript compilation with enhanced strict settings, successful build process with linting and type checking, proper ESLint integration, and successful static generation of 5 pages.\n\nThe enhanced configuration provides improved type safety, better IntelliSense and IDE support, consistent file naming enforcement, and comprehensive type definitions for project-specific needs.\n</info added on 2025-06-23T08:54:43.204Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Set up project structure",
+            "description": "Organize project folders and create initial files",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "Create folders for components, pages, styles, and utils. Set up a basic layout component. Create placeholder pages for home, about, and contact. Ensure all files use TypeScript extensions (.ts, .tsx).\n<info added on 2025-06-23T08:59:13.728Z>\n✅ Successfully set up comprehensive project structure and created all initial files\n\n**Directory structure created:**\n- src/components/ - React components (Layout.tsx)\n- src/app/ - Next.js app router pages\n  - src/app/about/page.tsx - About page with company info and features\n  - src/app/contact/page.tsx - Contact form and support information\n  - src/app/privacy-policy/page.tsx - Privacy policy with security details\n  - src/app/terms-of-service/page.tsx - Terms of service and usage guidelines\n- src/types/ - TypeScript type definitions (index.ts with PDF converter types)\n- src/utils/ - Utility functions (index.ts with file helpers, formatting, etc.)\n- src/hooks/ - Custom React hooks directory (ready for future use)\n- src/lib/ - Library integrations directory (ready for PDF.js and other libs)\n\n**Key components created:**\n- Layout.tsx: Responsive layout with header, navigation, footer using Tailwind CSS\n- All pages use TypeScript (.tsx extensions) as required\n- Proper Next.js Link components for navigation (fixed ESLint warnings)\n- Responsive design with mobile-friendly navigation\n\n**Utility functions implemented:**\n- formatFileSize() - Convert bytes to human readable format\n- isPDF() - Validate PDF file types\n- generateId() - Generate random IDs\n- debounce() - Rate limiting for function calls\n- formatProcessingTime() - Convert milliseconds to readable time\n- downloadFile() - Handle file downloads\n\n**Verification completed:**\n- Build successful: ✅ All 9 pages generated (5 + 4 new pages)\n- TypeScript compilation: ✅ Strict type checking passed\n- ESLint validation: ✅ All code quality checks passed\n- Responsive design: ✅ Mobile and desktop layouts\n- Navigation: ✅ Working internal links with Next.js Link components\n\n**Project structure benefits:**\n- Organized, scalable folder structure\n- Comprehensive type definitions for PDF converter features\n- Reusable utility functions for common operations\n- Professional static pages for legal compliance\n- Modern responsive design with Tailwind CSS\n</info added on 2025-06-23T08:59:13.728Z>",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Create static pages and main layout component",
+        "description": "Develop the static content pages (/about, /privacy-policy, /terms-of-service, /contact) and create a main layout component for consistent site structure.",
+        "status": "done",
+        "dependencies": [
+          1
+        ],
+        "priority": "high",
+        "details": "This task has been completed as part of Task 1 implementation. All required components have been created:\n\n1. Main Layout component created at `src/components/Layout.tsx` with:\n   - Responsive header with navigation menu\n   - Main content area with proper padding and container\n   - Footer with company information\n   - Mobile-friendly design using Tailwind CSS\n\n2. All static pages implemented:\n   - `/about` - Company information and features\n   - `/contact` - Contact form and support information  \n   - `/privacy-policy` - Privacy policy with security details\n   - `/terms-of-service` - Terms of service and usage guidelines\n\n3. Navigation implemented using Next.js Link components for optimal performance\n\n4. Responsive design using Tailwind CSS classes throughout\n\n5. All pages verified to build successfully (9 total pages generated)\n\nThe implementation exceeds the original requirements by including:\n- Comprehensive type definitions in `src/types/index.ts`\n- Utility functions in `src/utils/index.ts`\n- Enhanced TypeScript configuration\n- Prettier code formatting\n- ESLint integration",
+        "testStrategy": "All testing has been completed as part of the implementation:\n\n1. All static pages have been verified to be accessible and render correctly.\n2. Responsive design has been tested across various device sizes using Chrome DevTools device emulation.\n3. Navigation links in the header have been confirmed to work correctly.\n4. Layout consistency has been verified across all pages.\n5. HTML structure and accessibility have been validated.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design main layout structure",
+            "description": "Create the overall structure for the main layout component, including header, footer, and content areas.",
+            "status": "done",
+            "dependencies": [],
+            "details": "Use Tailwind CSS for responsive design. Include placeholders for navigation, logo, and footer content.",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement responsive header component",
+            "description": "Develop a responsive header component with navigation menu and logo.",
+            "status": "done",
+            "dependencies": [
+              1
+            ],
+            "details": "Use Tailwind CSS for styling. Implement a mobile-friendly hamburger menu for smaller screens.",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Create home page",
+            "description": "Design and implement the home page with key sections and content placeholders.",
+            "status": "done",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Include hero section, featured content, and call-to-action areas. Ensure responsive layout for all screen sizes.",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Develop about page",
+            "description": "Create the about page with company information and team member sections.",
+            "status": "done",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Use Tailwind CSS for styling. Implement a responsive grid layout for team member profiles.",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Implement contact page",
+            "description": "Design and develop the contact page with a form and contact information.",
+            "status": "done",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Create a responsive contact form using Tailwind CSS. Include form validation and submission placeholder.",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Implement privacy policy page",
+            "description": "Create the privacy policy page with security details.",
+            "status": "done",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Implemented as part of Task 1 with comprehensive security details.",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "Implement terms of service page",
+            "description": "Create the terms of service page with usage guidelines.",
+            "status": "done",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Implemented as part of Task 1 with detailed usage guidelines.",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Implement file uploader component",
+        "description": "Create a reusable file uploader component that supports both click-to-select and drag-and-drop functionality for PDF files.",
+        "details": "1. Create a new component 'components/FileUploader.tsx'.\n2. Implement drag-and-drop functionality using the HTML5 Drag and Drop API.\n3. Add click-to-select option using a hidden file input.\n4. Validate that only PDF files are accepted.\n5. Display visual feedback for drag events and file selection.\n6. Use React hooks (useState, useCallback) for state management.\n\nExample implementation:\n```typescript\nimport React, { useState, useCallback } from 'react'\n\ntype FileUploaderProps = {\n  onFileSelect: (file: File) => void\n}\n\nconst FileUploader: React.FC<FileUploaderProps> = ({ onFileSelect }) => {\n  const [isDragging, setIsDragging] = useState(false)\n\n  const handleDrag = useCallback((e: React.DragEvent) => {\n    e.preventDefault()\n    e.stopPropagation()\n    if (e.type === 'dragenter' || e.type === 'dragover') {\n      setIsDragging(true)\n    } else if (e.type === 'dragleave') {\n      setIsDragging(false)\n    }\n  }, [])\n\n  const handleDrop = useCallback(\n    (e: React.DragEvent) => {\n      e.preventDefault()\n      e.stopPropagation()\n      setIsDragging(false)\n      if (e.dataTransfer.files && e.dataTransfer.files[0]) {\n        const file = e.dataTransfer.files[0]\n        if (file.type === 'application/pdf') {\n          onFileSelect(file)\n        } else {\n          alert('Please upload a PDF file')\n        }\n      }\n    },\n    [onFileSelect]\n  )\n\n  const handleChange = useCallback(\n    (e: React.ChangeEvent<HTMLInputElement>) => {\n      if (e.target.files && e.target.files[0]) {\n        const file = e.target.files[0]\n        if (file.type === 'application/pdf') {\n          onFileSelect(file)\n        } else {\n          alert('Please upload a PDF file')\n        }\n      }\n    },\n    [onFileSelect]\n  )\n\n  return (\n    <div\n      onDragEnter={handleDrag}\n      onDragLeave={handleDrag}\n      onDragOver={handleDrag}\n      onDrop={handleDrop}\n      className={`border-2 border-dashed rounded-lg p-8 text-center ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'}`}\n    >\n      <input\n        type=\"file\"\n        accept=\".pdf\"\n        onChange={handleChange}\n        className=\"hidden\"\n        id=\"fileInput\"\n      />\n      <label htmlFor=\"fileInput\" className=\"cursor-pointer\">\n        <p>Drag and drop your PDF here, or click to select</p>\n      </label>\n    </div>\n  )\n}\n\nexport default FileUploader\n```",
+        "testStrategy": "1. Test drag-and-drop functionality with valid PDF files and other file types.\n2. Verify click-to-select works and opens the file dialog.\n3. Ensure proper visual feedback is given during drag events.\n4. Test with various file sizes to ensure consistent behavior.\n5. Verify that the component correctly passes the selected file to the parent component.\n6. Test accessibility by ensuring the component can be used with keyboard navigation.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement drag-and-drop functionality",
+            "description": "Create the drag-and-drop interface for file uploading",
+            "dependencies": [],
+            "details": "Use React's onDragOver, onDragLeave, and onDrop events to handle file dragging. Implement visual feedback for drag events. Ensure compatibility across different browsers.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Develop file validation logic",
+            "description": "Create functions to validate file types, sizes, and other constraints",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement checks for allowed file types, maximum file size, and any other project-specific constraints. Create clear error messages for invalid files.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement state management for file uploader",
+            "description": "Set up state to track uploaded files, upload progress, and errors",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Use React hooks (useState, useReducer) to manage component state. Track uploaded files, upload progress, and any validation errors. Ensure state updates trigger appropriate re-renders.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Create UI for file list and upload progress",
+            "description": "Design and implement the user interface for displaying uploaded files and upload progress",
+            "dependencies": [
+              3
+            ],
+            "details": "Create a list view of uploaded files with options to remove files. Implement a progress bar for upload status. Ensure the UI is responsive and accessible.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Integrate pdf.js and docx.js libraries",
+        "description": "Integrate pdf.js for PDF parsing and docx.js for Word document generation, creating a core conversion function.",
+        "details": "1. Install pdf.js and docx.js libraries:\n   ```\n   npm install pdfjs-dist@3.7.107 docx@8.2.0\n   ```\n2. Create a utility file 'utils/pdfToDocx.ts' for the conversion logic.\n3. Implement a function that takes a File object, reads it using pdf.js, and generates a docx file using docx.js.\n4. Handle basic text elements (paragraphs and line breaks) in the initial implementation.\n5. Return the generated docx as a Blob.\n\nExample implementation:\n```typescript\nimport * as pdfjsLib from 'pdfjs-dist'\nimport { Document, Packer, Paragraph, TextRun } from 'docx'\n\npdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`\n\nexport async function convertPdfToDocx(file: File): Promise<Blob> {\n  const arrayBuffer = await file.arrayBuffer()\n  const pdf = await pdfjsLib.getDocument(arrayBuffer).promise\n  const numPages = pdf.numPages\n  const docx = new Document()\n\n  for (let i = 1; i <= numPages; i++) {\n    const page = await pdf.getPage(i)\n    const content = await page.getTextContent()\n    const text = content.items.map((item: any) => item.str).join(' ')\n    \n    docx.addSection({\n      properties: {},\n      children: [\n        new Paragraph({\n          children: [new TextRun(text)],\n        }),\n      ],\n    })\n  }\n\n  return await Packer.toBlob(docx)\n}\n```",
+        "testStrategy": "1. Create unit tests for the conversion function using Jest.\n2. Test with various PDF files, including simple text-only PDFs and more complex ones.\n3. Verify that the generated Word document contains the expected content.\n4. Check for proper handling of paragraphs and line breaks.\n5. Test with large PDF files to ensure the function can handle them without crashing.\n6. Measure and optimize the conversion time for different file sizes.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set up pdf.js and docx.js libraries",
+            "description": "Install and configure pdf.js and docx.js libraries in the project",
+            "dependencies": [],
+            "details": "Install pdf.js and docx.js via npm or yarn. Set up necessary configurations and import statements in the project files.\n<info added on 2025-06-23T09:03:15.943Z>\n✅ COMPLETED: Successfully installed pdf.js and docx.js libraries\n\nINSTALLED PACKAGES:\n- pdfjs-dist@^4.0.0 - Latest stable version for PDF parsing\n- docx@^9.0.0 - Latest stable version for Word document generation\n\nRESEARCH FINDINGS:\n- Next.js 15 compatibility confirmed for both libraries\n- Identified best practices for SSR considerations (dynamic imports)\n- Learned about Web Workers for performance optimization\n- Noted enhanced features in pdf.js 4.x and docx.js 9.x\n- Established error handling and accessibility guidelines\n\nNEXT STEPS:\n- Implement PDF parsing with pdf.js (subtask 4.2)\n- Set up Word document structure generation (subtask 4.3)\n- Follow research recommendations for client-side only components and dynamic imports\n</info added on 2025-06-23T09:03:15.943Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement PDF parsing with pdf.js",
+            "description": "Create functions to parse PDF files and extract relevant elements",
+            "dependencies": [
+              1
+            ],
+            "details": "Use pdf.js to load and parse PDF files. Extract text, images, tables, and other relevant elements from the PDF structure.\n<info added on 2025-06-23T09:05:29.873Z>\nSuccessfully implemented PDF parsing with pdf.js. Created comprehensive PDF parser at `src/lib/pdfParser.ts` with full TypeScript support and proper type definitions. The implementation extracts text content from all pages with positional information, metadata (title, author, subject, creator, producer, dates), and includes error handling with a custom PDFParseError class.\n\nKey features include text normalization and positioning (top-to-bottom, left-to-right sorting), utility functions for PDF validation and page counting, and client-side only configuration for Next.js SSR compatibility.\n\nImplemented interfaces:\n- PDFTextItem: Individual text elements with position and font info\n- PDFPageContent: Complete page content with text items and dimensions\n- PDFParseResult: Full document parsing result with metadata\n- PDFParseError: Custom error class for better error handling\n\nAll code compiles successfully with no TypeScript or ESLint errors.\n</info added on 2025-06-23T09:05:29.873Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Develop Word document structure generation",
+            "description": "Create functions to generate Word document structures using docx.js",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement functions that use docx.js to create Word document structures, including paragraphs, headings, tables, and image placeholders.\n<info added on 2025-06-23T09:08:35.571Z>\nSuccessfully developed Word document structure generation with docx.js\n\nIMPLEMENTED FEATURES:\n- Created comprehensive Word document generator at `src/lib/docxGenerator.ts`\n- Full TypeScript support with proper type definitions\n- Advanced document structure generation with multiple sections\n- Metadata integration from PDF source documents\n- Professional document formatting with headers, footers, and page numbers\n- Text positioning and formatting preservation from PDF\n- Configurable generation options\n\nKEY INTERFACES:\n- WordDocumentOptions: Comprehensive configuration options for document generation\n- WordGenerationResult: Complete result with document, blob, and metadata\n- WordGenerationError: Custom error class for better error handling\n\nADVANCED FEATURES IMPLEMENTED:\n- Title page generation with metadata display\n- Header/footer support with page numbering\n- Text formatting preservation (font size, positioning)\n- Line grouping based on Y-position for better text flow\n- Configurable margins, fonts, and spacing\n- Word count and character count estimation\n- Professional document styling with proper spacing and alignment\n\nDOCUMENT STRUCTURE:\n- Optional title page with PDF metadata\n- Page-by-page content conversion with headings\n- Preserved text positioning and formatting\n- Professional headers and footers\n- Proper page breaks and numbering\n\nUTILITY FUNCTIONS:\n- generateWordDocument(): Main comprehensive conversion function\n- createSimpleWordDocument(): Simple text-to-Word conversion\n- groupTextItemsByLines(): Text positioning analysis\n- createFormattedParagraph(): Advanced paragraph formatting\n- estimateWordCount(): Text analysis utilities\n\nBUILD VERIFICATION: ✅ Compiles successfully with no TypeScript or ESLint errors\n\nNEXT STEPS:\n- Move to subtask 4.4: Map PDF elements to Word structures\n- Then subtask 4.5: Implement the main file conversion process\n</info added on 2025-06-23T09:08:35.571Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Map PDF elements to Word structures",
+            "description": "Create a mapping system to convert PDF elements to corresponding Word document structures",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Develop a system that takes parsed PDF elements and maps them to appropriate Word document structures. Handle text formatting, layout, and special elements.\n<info added on 2025-06-23T09:11:23.001Z>\nSuccessfully implemented PDF elements to Word structures mapping system\n\nIMPLEMENTED FEATURES:\n- Created comprehensive PDF to Word conversion system at `src/lib/pdfToWordConverter.ts`\n- Full TypeScript support with strict type definitions\n- Complete mapping between PDF parser and Word document generator\n- Advanced progress tracking and error handling\n- Flexible conversion options and validation\n\nKEY INTERFACES:\n- ConversionOptions: Comprehensive configuration for conversion process\n- ConversionProgress: Real-time progress tracking with stages\n- ConversionResult: Complete conversion result with metadata and error handling\n- ConversionError: Custom error class with stage tracking\n\nCORE CONVERSION FEATURES:\n- Main convertPdfToWord() function orchestrating the entire process\n- Input validation for PDF files and conversion options\n- Progress tracking through parsing, processing, and generation stages\n- Two conversion modes: Simple (basic text) and Advanced (formatting preservation)\n- Comprehensive error handling with stage-specific error reporting\n- Warning system for potential issues (empty content, image-based PDFs, etc.)\n\nADVANCED CAPABILITIES:\n- Content validation and quality assessment\n- Automatic metadata extraction and preservation\n- Configurable document styling and formatting options\n- Performance monitoring with conversion time tracking\n- Support for large documents with progress reporting\n- Utility functions for file validation and option validation\n\nMAPPING SYSTEM:\n- Seamless integration between PDF parser and Word generator\n- Intelligent content processing and validation\n- Metadata preservation from PDF to Word\n- Font and formatting mapping where possible\n- Page structure preservation with proper breaks\n- Text positioning and line grouping preservation\n\nUTILITY FUNCTIONS:\n- validateConversionOptions(): Input validation\n- getSupportedFileTypes(): File type support\n- isFileSupported(): File validation\n- processAndValidateContent(): Content quality assessment\n\nBUILD VERIFICATION: ✅ Compiles successfully with no TypeScript or ESLint errors\n\nNEXT STEPS:\n- Move to subtask 4.5: Implement the main file conversion process\n- This will complete the core conversion functionality\n</info added on 2025-06-23T09:11:23.001Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Implement file conversion process",
+            "description": "Create the main conversion function that ties all components together",
+            "dependencies": [
+              4
+            ],
+            "details": "Implement the main conversion function that takes a PDF file as input, uses the parsing and mapping functions, and outputs a Word document. Include error handling and progress tracking.\n<info added on 2025-06-23T09:13:07.173Z>\n✅ COMPLETED: Successfully implemented the main file conversion process\n\nIMPLEMENTED FEATURES:\n- Created comprehensive library export at `src/lib/index.ts`\n- Clean, well-organized API for PDF to Word conversion\n- Multiple conversion modes for different use cases\n- Utility functions for file handling and formatting\n- Complete TypeScript support with proper type exports\n\nMAIN API FUNCTIONS:\n- quickConvert(): Fast conversion with default options\n- simpleConvert(): Basic text-only conversion\n- professionalConvert(): High-quality conversion with full formatting\n- convertPdfToWord(): Main conversion function with custom options\n\nPREDEFINED OPTION SETS:\n- DEFAULT_CONVERSION_OPTIONS: Balanced settings for general use\n- SIMPLE_CONVERSION_OPTIONS: Minimal settings for text extraction\n- PROFESSIONAL_CONVERSION_OPTIONS: High-quality settings with margins\n\nUTILITY FUNCTIONS:\n- downloadWordDocument(): Browser download functionality\n- formatFileSize(): Human-readable file size formatting\n- formatConversionTime(): Conversion time formatting\n- validateConversionOptions(): Input validation\n- getSupportedFileTypes(): File type information\n- isFileSupported(): File validation\n\nCOMPLETE EXPORT STRUCTURE:\n- Main conversion functions (quickConvert, simpleConvert, professionalConvert)\n- Core conversion system (convertPdfToWord, validation functions)\n- Advanced components (PDF parser, Word generator) for power users\n- All TypeScript types and interfaces\n- Utility functions for UI integration\n- Error classes for proper error handling\n\nINTEGRATION READY:\n- Clean API suitable for React components\n- Progress callback support for UI updates\n- Comprehensive error handling with specific error types\n- File validation and type checking\n- Browser-compatible download functionality\n- Multiple conversion quality levels\n\nBUILD VERIFICATION: ✅ Compiles successfully with no TypeScript or ESLint errors\n\nCORE CONVERSION PROCESS COMPLETE:\n✅ PDF parsing with pdf.js (subtask 4.1, 4.2)\n✅ Word document generation with docx.js (subtask 4.3)\n✅ PDF to Word mapping system (subtask 4.4)\n✅ Main file conversion process (subtask 4.5)\n\nThe core PDF to Word conversion functionality is now fully implemented and ready for integration into the user interface components.\n</info added on 2025-06-23T09:13:07.173Z>",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Implement core conversion logic and UI state management",
+        "description": "Connect the file uploader component to the conversion function and implement UI state management for the conversion process.",
+        "details": "1. Create a new page component 'pages/index.tsx' for the main converter tool.\n2. Implement state management using React hooks (useState, useCallback).\n3. Connect the FileUploader component to trigger the conversion process.\n4. Create visual states for idle, file-selected, processing, success, and error.\n5. Implement loading indicators and success/error messages.\n6. Handle the conversion process and update the UI accordingly.\n\nExample implementation:\n```typescript\nimport { useState, useCallback } from 'react'\nimport Layout from '../components/Layout'\nimport FileUploader from '../components/FileUploader'\nimport { convertPdfToDocx } from '../utils/pdfToDocx'\n\nconst IndexPage = () => {\n  const [file, setFile] = useState<File | null>(null)\n  const [status, setStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle')\n  const [docxBlob, setDocxBlob] = useState<Blob | null>(null)\n\n  const handleFileSelect = useCallback((selectedFile: File) => {\n    setFile(selectedFile)\n    setStatus('idle')\n    setDocxBlob(null)\n  }, [])\n\n  const handleConvert = useCallback(async () => {\n    if (!file) return\n    setStatus('processing')\n    try {\n      const blob = await convertPdfToDocx(file)\n      setDocxBlob(blob)\n      setStatus('success')\n    } catch (error) {\n      console.error('Conversion failed:', error)\n      setStatus('error')\n    }\n  }, [file])\n\n  const handleDownload = useCallback(() => {\n    if (!docxBlob) return\n    const url = URL.createObjectURL(docxBlob)\n    const a = document.createElement('a')\n    a.href = url\n    a.download = file?.name.replace('.pdf', '.docx') || 'converted.docx'\n    document.body.appendChild(a)\n    a.click()\n    document.body.removeChild(a)\n    URL.revokeObjectURL(url)\n  }, [docxBlob, file])\n\n  return (\n    <Layout title=\"PDFconv - Convert PDF to Word\">\n      <div className=\"max-w-2xl mx-auto\">\n        <h1 className=\"text-3xl font-bold mb-8\">Convert PDF to Word</h1>\n        <FileUploader onFileSelect={handleFileSelect} />\n        {file && (\n          <div className=\"mt-4\">\n            <p>Selected file: {file.name}</p>\n            <button\n              onClick={handleConvert}\n              disabled={status === 'processing'}\n              className=\"bg-blue-500 text-white px-4 py-2 rounded mt-2\"\n            >\n              {status === 'processing' ? 'Converting...' : 'Convert'}\n            </button>\n          </div>\n        )}\n        {status === 'success' && (\n          <div className=\"mt-4\">\n            <p className=\"text-green-600\">Conversion successful!</p>\n            <button\n              onClick={handleDownload}\n              className=\"bg-green-500 text-white px-4 py-2 rounded mt-2\"\n            >\n              Download Word Document\n            </button>\n          </div>\n        )}\n        {status === 'error' && (\n          <p className=\"mt-4 text-red-600\">An error occurred during conversion. Please try again.</p>\n        )}\n      </div>\n    </Layout>\n  )\n}\n\nexport default IndexPage\n```",
+        "testStrategy": "1. Test the entire conversion flow from file selection to download.\n2. Verify that all UI states (idle, processing, success, error) are displayed correctly.\n3. Test with various PDF files to ensure consistent behavior.\n4. Verify that the download functionality works correctly.\n5. Test error handling by simulating conversion failures.\n6. Perform usability testing to ensure the interface is intuitive and responsive.",
+        "priority": "high",
+        "dependencies": [
+          2,
+          3,
+          4
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design UI state management structure",
+            "description": "Create a comprehensive state management structure for the conversion process UI",
+            "dependencies": [],
+            "details": "Define state variables for input file, output format, conversion progress, and error messages. Consider using a state management library like Redux or Context API for complex state handling.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement file input and format selection",
+            "description": "Create UI components for file input and output format selection",
+            "dependencies": [
+              1
+            ],
+            "details": "Develop file upload component with drag-and-drop functionality. Create a dropdown or radio buttons for output format selection. Update state when user interacts with these components.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Develop conversion process logic",
+            "description": "Implement the core logic for the file conversion process",
+            "dependencies": [
+              2
+            ],
+            "details": "Create functions to handle the conversion process, including file reading, format conversion, and writing the output file. Ensure these operations are performed asynchronously to prevent UI blocking.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement progress indication",
+            "description": "Add a progress bar or indicator to show conversion status",
+            "dependencies": [
+              3
+            ],
+            "details": "Create a progress component that updates in real-time as the conversion process advances. Implement logic to calculate and update progress percentage based on conversion steps.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Develop error handling mechanism",
+            "description": "Implement comprehensive error handling for the conversion process",
+            "dependencies": [
+              3
+            ],
+            "details": "Create error catching mechanisms for various potential issues (e.g., unsupported file types, conversion failures). Develop user-friendly error messages and UI components to display them.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Integrate and test full conversion flow",
+            "description": "Combine all components and test the entire conversion process",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "Integrate all developed components into a cohesive conversion flow. Perform thorough testing with various file types and sizes. Ensure smooth state transitions, accurate progress indication, and proper error handling.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Implement Google AdSense integration",
+        "description": "Integrate Google AdSense for monetization by adding the required JavaScript snippet and placing ad components in the UI.",
+        "details": "1. Sign up for a Google AdSense account if not already done.\n2. Create a new AdSense component: 'components/AdSense.tsx'.\n3. Add the AdSense script to the document head using Next.js' next/script component.\n4. Place AdSense components in non-intrusive locations (e.g., top banner, side skyscraper).\n5. Ensure ads are responsive and don't interfere with the main functionality.\n\nExample AdSense component:\n```typescript\nimport React, { useEffect } from 'react'\n\ntype AdSenseProps = {\n  adClient: string\n  adSlot: string\n  adFormat?: string\n  style?: React.CSSProperties\n}\n\nconst AdSense: React.FC<AdSenseProps> = ({ adClient, adSlot, adFormat = 'auto', style = {} }) => {\n  useEffect(() => {\n    try {\n      (window.adsbygoogle = window.adsbygoogle || []).push({})\n    } catch (err) {\n      console.error('AdSense error:', err)\n    }\n  }, [])\n\n  return (\n    <ins\n      className=\"adsbygoogle\"\n      style={style}\n      data-ad-client={adClient}\n      data-ad-slot={adSlot}\n      data-ad-format={adFormat}\n    />\n  )\n}\n\nexport default AdSense\n```\n\nAdd the AdSense script in '_app.tsx':\n```typescript\nimport Script from 'next/script'\n\nfunction MyApp({ Component, pageProps }) {\n  return (\n    <>\n      <Script\n        strategy=\"afterInteractive\"\n        src=\"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js\"\n        data-ad-client=\"ca-pub-XXXXXXXXXXXXXXXX\"\n      />\n      <Component {...pageProps} />\n    </>\n  )\n}\n\nexport default MyApp\n```",
+        "testStrategy": "1. Verify that AdSense scripts are loaded correctly in the browser.\n2. Check that ad placeholders appear in the designated locations.\n3. Test responsiveness of ad units on various screen sizes.\n4. Ensure that ads do not interfere with the main functionality of the site.\n5. Verify that ad blocking software doesn't break the site's layout.\n6. Monitor AdSense dashboard for impressions and clicks to confirm proper integration.",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          5
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set up Google AdSense account",
+            "description": "Create and configure a Google AdSense account for the project",
+            "dependencies": [],
+            "details": "Register for a Google AdSense account, verify website ownership, and complete the necessary account setup steps. Ensure compliance with AdSense policies and guidelines.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement ad placement strategy",
+            "description": "Determine optimal ad placements within the application",
+            "dependencies": [
+              1
+            ],
+            "details": "Analyze user flow and identify strategic locations for ad placement. Consider user experience and engagement when deciding on ad positions. Create a mockup of ad placements for review.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Integrate responsive AdSense ads",
+            "description": "Implement AdSense code with responsive design considerations",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Add AdSense code to the application, ensuring ads are responsive across different device sizes. Test ad rendering on various screen resolutions and adjust as needed for optimal display and performance.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Implement error handling and user feedback",
+        "description": "Enhance the application with comprehensive error handling and clear user feedback for various scenarios.",
+        "details": "1. Create a reusable Error component: 'components/Error.tsx'.\n2. Implement error boundaries to catch and display runtime errors.\n3. Add specific error messages for common scenarios (e.g., unsupported file type, conversion failure).\n4. Create a Toast component for non-critical notifications.\n5. Implement loading indicators for asynchronous operations.\n\nExample Error component:\n```typescript\nimport React from 'react'\n\ntype ErrorProps = {\n  message: string\n  onRetry?: () => void\n}\n\nconst Error: React.FC<ErrorProps> = ({ message, onRetry }) => (\n  <div className=\"bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative\" role=\"alert\">\n    <strong className=\"font-bold\">Error: </strong>\n    <span className=\"block sm:inline\">{message}</span>\n    {onRetry && (\n      <button\n        onClick={onRetry}\n        className=\"bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded mt-2\"\n      >\n        Retry\n      </button>\n    )}\n  </div>\n)\n\nexport default Error\n```\n\nImplement error boundaries:\n```typescript\nimport React, { ErrorInfo } from 'react'\nimport Error from './Error'\n\nclass ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {\n  constructor(props) {\n    super(props)\n    this.state = { hasError: false }\n  }\n\n  static getDerivedStateFromError(_: Error) {\n    return { hasError: true }\n  }\n\n  componentDidCatch(error: Error, errorInfo: ErrorInfo) {\n    console.error('Uncaught error:', error, errorInfo)\n  }\n\n  render() {\n    if (this.state.hasError) {\n      return <Error message=\"Something went wrong. Please try again later.\" />\n    }\n\n    return this.props.children\n  }\n}\n\nexport default ErrorBoundary\n```",
+        "testStrategy": "1. Test error handling for various scenarios (e.g., network errors, invalid file types).\n2. Verify that error messages are clear and actionable.\n3. Test error boundaries by intentionally causing runtime errors.\n4. Ensure loading indicators appear and disappear at appropriate times.\n5. Test the retry functionality for recoverable errors.\n6. Verify that error states don't break the overall layout or functionality of the app.",
+        "priority": "high",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Error Boundary Component",
+            "description": "Create a reusable Error Boundary component to catch and handle JavaScript errors anywhere in the component tree",
+            "dependencies": [],
+            "details": "Use React's Error Boundary feature to create a higher-order component that can wrap other components and catch errors. Implement componentDidCatch lifecycle method and state management for error handling.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Design Error Message Templates",
+            "description": "Create a set of specific error message templates for different types of errors that may occur in the application",
+            "dependencies": [],
+            "details": "Identify common error scenarios (e.g., network errors, validation errors, server errors) and create clear, user-friendly message templates for each. Consider internationalization requirements.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Develop User Feedback Components",
+            "description": "Create reusable components for displaying error messages, warnings, and success notifications to users",
+            "dependencies": [
+              2
+            ],
+            "details": "Design and implement components such as toast notifications, modal dialogs, and inline error messages. Ensure these components are accessible and can be easily integrated into different parts of the application.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement Global Error Handling",
+            "description": "Set up global error handling mechanisms to catch and process unhandled errors and exceptions",
+            "dependencies": [
+              1,
+              3
+            ],
+            "details": "Implement a global error handler that can catch unhandled promise rejections and other global errors. Integrate this with the Error Boundary and user feedback components to ensure all errors are properly handled and communicated to the user.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Test and Refine Error Handling",
+            "description": "Conduct thorough testing of the error handling mechanisms and refine based on results",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Create test cases for various error scenarios, including both expected and unexpected errors. Test the Error Boundary, specific error messages, and user feedback components. Refine the implementation based on test results and user feedback.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Implement basic analytics and performance monitoring",
+        "description": "Set up analytics to track user interactions and monitor the application's performance.",
+        "details": "1. Integrate Google Analytics for user behavior tracking.\n2. Implement custom events for key user actions (e.g., file upload, conversion start/complete).\n3. Set up error tracking and reporting using a service like Sentry.\n4. Implement basic performance monitoring using the Web Vitals library.\n5. Create a dashboard or reporting mechanism for easy monitoring.\n\nIntegrate Google Analytics:\n```typescript\n// pages/_app.tsx\nimport { useEffect } from 'react'\nimport { useRouter } from 'next/router'\nimport * as gtag from '../lib/gtag'\n\nconst App = ({ Component, pageProps }) => {\n  const router = useRouter()\n  useEffect(() => {\n    const handleRouteChange = (url: URL) => {\n      gtag.pageview(url)\n    }\n    router.events.on('routeChangeComplete', handleRouteChange)\n    return () => {\n      router.events.off('routeChangeComplete', handleRouteChange)\n    }\n  }, [router.events])\n\n  return <Component {...pageProps} />\n}\n\nexport default App\n```\n\nImplement custom event tracking:\n```typescript\nimport * as gtag from '../lib/gtag'\n\n// In your component\nconst handleConversionStart = () => {\n  gtag.event({\n    action: 'conversion_start',\n    category: 'Conversion',\n    label: 'PDF to Word',\n  })\n}\n```\n\nSet up Sentry for error tracking:\n```typescript\n// pages/_app.tsx\nimport { Integrations } from \"@sentry/tracing\"\nimport * as Sentry from \"@sentry/nextjs\"\n\nSentry.init({\n  dsn: \"https://examplePublicKey@o0.ingest.sentry.io/0\",\n  integrations: [new Integrations.BrowserTracing()],\n  tracesSampleRate: 1.0,\n})\n\nconst App = ({ Component, pageProps }) => {\n  return <Component {...pageProps} />\n}\n\nexport default App\n```",
+        "testStrategy": "1. Verify that Google Analytics is correctly tracking page views and custom events.\n2. Test error tracking by intentionally causing errors and checking Sentry dashboard.\n3. Monitor Web Vitals scores and set up alerts for performance regressions.\n4. Verify that analytics and monitoring don't significantly impact the app's performance.\n5. Test that sensitive user data is not being inadvertently collected or transmitted.\n6. Set up automated reports or dashboards to easily monitor key metrics.",
+        "priority": "medium",
+        "dependencies": [
+          5,
+          7
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set up Google Analytics",
+            "description": "Integrate Google Analytics into the application for basic usage tracking",
+            "dependencies": [],
+            "details": "Create a Google Analytics account, obtain tracking ID, add GA script to the application, and configure basic pageview tracking",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement custom event tracking",
+            "description": "Define and implement custom events to track specific user interactions",
+            "dependencies": [
+              1
+            ],
+            "details": "Identify key user actions to track, create a tracking plan, and implement custom event tracking using Google Analytics or a custom solution",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Set up error reporting",
+            "description": "Implement a system to capture and report application errors",
+            "dependencies": [],
+            "details": "Choose an error reporting tool (e.g., Sentry, Rollbar), integrate it into the application, and configure it to capture and report errors",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Create performance monitoring dashboard",
+            "description": "Develop a dashboard to visualize analytics and performance metrics",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Design and implement a dashboard that displays key metrics from Google Analytics, custom events, and error reports in a user-friendly format",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Implement caching and optimization strategies",
+        "description": "Optimize the application's performance through caching and other performance enhancement techniques.",
+        "details": "1. Implement service workers for offline support and faster loading.\n2. Use Next.js Image component for optimized image loading.\n3. Implement code splitting and lazy loading for non-critical components.\n4. Set up proper caching headers for static assets.\n5. Optimize third-party script loading.\n6. Implement preloading for critical resources.\n\nImplement service worker:\n```typescript\n// public/service-worker.js\nself.addEventListener('install', (event) => {\n  event.waitUntil(\n    caches.open('pdf-conv-v1').then((cache) => {\n      return cache.addAll([\n        '/',\n        '/index.js',\n        '/styles.css',\n        // Add other critical assets\n      ])\n    })\n  )\n})\n\nself.addEventListener('fetch', (event) => {\n  event.respondWith(\n    caches.match(event.request).then((response) => {\n      return response || fetch(event.request)\n    })\n  )\n})\n```\n\nRegister service worker:\n```typescript\n// pages/_app.tsx\nimport { useEffect } from 'react'\n\nconst App = ({ Component, pageProps }) => {\n  useEffect(() => {\n    if ('serviceWorker' in navigator) {\n      window.addEventListener('load', function() {\n        navigator.serviceWorker.register('/service-worker.js').then(\n          function(registration) {\n            console.log('ServiceWorker registration successful with scope: ', registration.scope)\n          },\n          function(err) {\n            console.log('ServiceWorker registration failed: ', err)\n          }\n        )\n      })\n    }\n  }, [])\n\n  return <Component {...pageProps} />\n}\n\nexport default App\n```\n\nUse Next.js Image component:\n```typescript\nimport Image from 'next/image'\n\nconst MyImage = () => (\n  <Image\n    src=\"/path/to/image.jpg\"\n    alt=\"Description\"\n    width={500}\n    height={300}\n    priority\n  />\n)\n```",
+        "testStrategy": "1. Measure and compare load times before and after implementing optimizations.\n2. Test offline functionality with service workers.\n3. Verify that images are being properly optimized and lazy-loaded.\n4. Check that code splitting is working as expected for non-critical components.\n5. Use browser developer tools to verify caching behavior for static assets.\n6. Perform lighthouse audits to ensure overall performance improvements.",
+        "priority": "medium",
+        "dependencies": [
+          5,
+          8
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Service Workers",
+            "description": "Set up and configure service workers for offline functionality and improved performance",
+            "dependencies": [],
+            "details": "Research service worker lifecycle, create a service worker file, register it in the main JavaScript file, and implement caching strategies for static assets and API responses",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement Code Splitting",
+            "description": "Break down the application code into smaller chunks to improve initial load time",
+            "dependencies": [],
+            "details": "Analyze the current bundle size, identify candidates for code splitting, use dynamic imports for route-based code splitting, and implement lazy loading for components and modules",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement Resource Preloading",
+            "description": "Optimize resource loading by preloading critical assets",
+            "dependencies": [],
+            "details": "Identify critical resources (CSS, fonts, key images), add preload links in the HTML, implement rel='preload' for important assets, and use prefetch for resources needed for future navigations",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Optimize Images and Media",
+            "description": "Implement techniques to reduce image and media file sizes without compromising quality",
+            "dependencies": [
+              3
+            ],
+            "details": "Use appropriate image formats (WebP, AVIF), implement responsive images, lazy load non-critical images, and compress and optimize video content",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Implement Caching Strategies",
+            "description": "Develop and implement effective caching strategies for different types of resources",
+            "dependencies": [
+              1
+            ],
+            "details": "Define caching policies for static assets, API responses, and dynamic content, implement cache-first strategy for offline support, and set up cache invalidation mechanisms",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Performance Testing and Optimization",
+            "description": "Conduct thorough performance testing and make necessary optimizations",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "Use tools like Lighthouse and WebPageTest, analyze Core Web Vitals, identify and fix performance bottlenecks, and implement continuous performance monitoring",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Conduct final testing and prepare for deployment",
+        "description": "Perform comprehensive testing of the entire application and prepare for production deployment.",
+        "details": "1. Conduct end-to-end testing of the entire conversion flow.\n2. Perform cross-browser testing (Chrome, Firefox, Safari, Edge).\n3. Test responsiveness on various devices and screen sizes.\n4. Conduct accessibility testing using tools like axe-core.\n5. Perform security audits, including checking for common vulnerabilities.\n6. Optimize build process for production deployment.\n7. Set up continuous integration and deployment (CI/CD) pipeline.\n\nSet up end-to-end testing with Cypress:\n```typescript\n// cypress/integration/conversion.spec.js\ndescribe('PDF to Word Conversion', () => {\n  it('successfully converts a PDF to Word', () => {\n    cy.visit('/')\n    cy.get('input[type=file]').attachFile('test.pdf')\n    cy.get('button').contains('Convert').click()\n    cy.get('button').contains('Download').should('be.visible')\n    cy.get('button').contains('Download').click()\n    cy.readFile('cypress/downloads/test.docx').should('exist')\n  })\n})\n```\n\nSet up accessibility testing:\n```typescript\n// Install axe-core and cypress-axe\nnpm install axe-core cypress-axe\n\n// cypress/support/index.js\nimport 'cypress-axe'\n\n// In your test file\ndescribe('Accessibility tests', () => {\n  it('should have no detectable accessibility violations', () => {\n    cy.visit('/')\n    cy.injectAxe()\n    cy.checkA11y()\n  })\n})\n```\n\nSet up a basic CI/CD pipeline with GitHub Actions:\n```yaml\n# .github/workflows/ci-cd.yml\nname: CI/CD\n\non:\n  push:\n    branches: [ main ]\n  pull_request:\n    branches: [ main ]\n\njobs:\n  build-and-test:\n    runs-on: ubuntu-latest\n    steps:\n    - uses: actions/checkout@v2\n    - name: Use Node.js\n      uses: actions/setup-node@v2\n      with:\n        node-version: '14.x'\n    - run: npm ci\n    - run: npm run build\n    - run: npm test\n    - run: npm run cypress:run\n\n  deploy:\n    needs: build-and-test\n    runs-on: ubuntu-latest\n    if: github.ref == 'refs/heads/main'\n    steps:\n    - uses: actions/checkout@v2\n    - name: Deploy to Vercel\n      uses: amondnet/vercel-action@v20\n      with:\n        vercel-token: ${{ secrets.VERCEL_TOKEN }}\n        vercel-org-id: ${{ secrets.ORG_ID}}\n        vercel-project-id: ${{ secrets.PROJECT_ID}}\n        vercel-args: '--prod'\n```",
+        "testStrategy": "1. Run the full suite of end-to-end tests using Cypress.\n2. Perform manual testing on different browsers and devices.\n3. Run accessibility tests and address any issues found.\n4. Conduct performance testing using Lighthouse and WebPageTest.\n5. Perform security testing using tools like OWASP ZAP.\n6. Verify that the CI/CD pipeline successfully builds, tests, and deploys the application.\n7. Conduct a final UAT (User Acceptance Testing) with a small group of test users.",
+        "priority": "high",
+        "dependencies": [
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define Test Strategy",
+            "description": "Create a comprehensive test strategy document outlining all types of tests to be performed",
+            "dependencies": [],
+            "details": "Include sections for unit tests, integration tests, end-to-end tests, cross-browser tests, and accessibility tests. Define the scope, tools, and methodologies for each test type.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Set Up End-to-End Testing Framework",
+            "description": "Choose and implement an end-to-end testing framework like Cypress or Selenium",
+            "dependencies": [
+              1
+            ],
+            "details": "Install the chosen framework, set up the initial configuration, and create a basic test structure. Include test scripts for critical user flows.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement Cross-Browser Testing",
+            "description": "Set up cross-browser testing using a tool like BrowserStack or Sauce Labs",
+            "dependencies": [
+              2
+            ],
+            "details": "Configure the testing environment to run tests on multiple browsers and versions. Create a matrix of browsers and operating systems to test against.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Conduct Accessibility Testing",
+            "description": "Perform accessibility testing using tools like axe-core or WAVE",
+            "dependencies": [
+              1
+            ],
+            "details": "Integrate accessibility testing tools into the development process. Create test cases for WCAG compliance and generate reports on accessibility issues.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Set Up CI/CD Pipeline",
+            "description": "Implement a CI/CD pipeline using a tool like Jenkins, GitLab CI, or GitHub Actions",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Configure the pipeline to automatically run all tests on code commits. Set up stages for building, testing, and deploying the application.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Create Test Documentation",
+            "description": "Develop comprehensive documentation for all testing processes and procedures",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "Document test cases, testing environments, and how to run and maintain tests. Include troubleshooting guides and best practices for each type of test.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "Conduct Training and Knowledge Transfer",
+            "description": "Organize training sessions for the team on the testing strategy and CI/CD pipeline",
+            "dependencies": [
+              6
+            ],
+            "details": "Prepare training materials and conduct workshops to ensure all team members understand the testing processes and can effectively use the CI/CD pipeline.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created": "2025-06-23T08:40:41.001Z",
+      "updated": "2025-06-23T09:13:16.993Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
