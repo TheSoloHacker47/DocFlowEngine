@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { onCLS, onINP, onFCP, onLCP, onTTFB, type Metric } from 'web-vitals';
 import { trackPerformanceMetric } from '@/lib/analytics';
-import { reportMessage } from '@/lib/sentry';
+// import { reportMessage } from '@/lib/sentry';
 
 interface PerformanceMetrics {
   cls: number | null;

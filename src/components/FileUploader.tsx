@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Upload, File, XCircle, RefreshCcw } from 'lucide-react';
+import { Upload, File, XCircle } from 'lucide-react';
 
 interface FileUploaderProps {
   onFileSelect: (file: File) => void;

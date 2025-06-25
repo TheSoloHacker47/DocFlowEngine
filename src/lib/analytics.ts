@@ -1,7 +1,7 @@
 // Google Analytics 4 (GA4) implementation for Next.js App Router
 // Using the modern gtag approach recommended by Google
 
-import { reportError, reportMessage } from './sentry';
+import { reportError } from './sentry';
 
 export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID || '';
 

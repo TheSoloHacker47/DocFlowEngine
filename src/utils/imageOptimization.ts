@@ -107,7 +107,7 @@ export const shouldLazyLoad = (element: HTMLElement): boolean => {
   if (isInViewport) return false;
   
   // Check connection speed if available
-  const connection = (navigator as any).connection;
+  const connection = (navigator as unknown as { connection?: { effectiveType: string } }).connection;
   if (connection && connection.effectiveType === 'slow-2g') {
     return true; // Always lazy load on slow connections
   }

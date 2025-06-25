@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { reportError, reportMessage, addErrorContext } from '@/lib/sentry';
+import { reportError, addErrorContext } from '@/lib/sentry';
 
 export default function ErrorReportingProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {

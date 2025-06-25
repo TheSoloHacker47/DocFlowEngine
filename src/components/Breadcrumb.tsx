@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Suspense } from 'react';
 
 interface BreadcrumbItem {
   name: string;
@@ -14,11 +15,22 @@ interface BreadcrumbProps {
   className?: string;
 }
 
-const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className = '' }) => {
-  const pathname = usePathname();
+const BreadcrumbContent: React.FC<BreadcrumbProps> = ({ items, className = '' }) => {
+  let pathname: string;
+  try {
+    pathname = usePathname();
+  } catch {
+    // Fallback for SSR/static generation
+    pathname = '/';
+  }
   
   // Generate breadcrumb items from pathname if not provided
   const generateBreadcrumbs = (): BreadcrumbItem[] => {
+    // Handle case where pathname might not be available during SSR
+    if (!pathname) {
+      return [{ name: 'Home', href: '/' }];
+    }
+    
     const pathSegments = pathname.split('/').filter(segment => segment);
     const breadcrumbs: BreadcrumbItem[] = [
       { name: 'Home', href: '/' }
@@ -33,7 +45,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className = '' }) => {
         .split('-')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
-
+      
       breadcrumbs.push({
         name,
         href: currentPath,
@@ -96,6 +108,12 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className = '' }) => {
     </nav>
   );
 };
+
+const Breadcrumb: React.FC<BreadcrumbProps> = (props) => (
+  <Suspense fallback={<div className="text-sm text-gray-500">Loading...</div>}>
+    <BreadcrumbContent {...props} />
+  </Suspense>
+);
 
 export default Breadcrumb;
 

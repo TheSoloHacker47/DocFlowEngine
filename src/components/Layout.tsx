@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import { BaseComponentProps } from '@/types';
 
-interface LayoutProps extends BaseComponentProps {}
+interface LayoutProps extends BaseComponentProps {
+  // Layout-specific props can be added here in the future
+}
 
 export default function Layout({
   children,

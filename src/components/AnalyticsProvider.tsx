@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, Suspense } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { trackPageView, initAnalyticsConsent, GA_TRACKING_ID } from '@/lib/analytics';
 import { initSentry } from '@/lib/sentry';
 
-export default function AnalyticsProvider({ children }: { children: React.ReactNode }) {
+function AnalyticsContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -46,4 +46,12 @@ export default function AnalyticsProvider({ children }: { children: React.ReactN
   }, [pathname, searchParams]);
 
   return <>{children}</>;
+}
+
+export default function AnalyticsProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={<>{children}</>}>
+      <AnalyticsContent>{children}</AnalyticsContent>
+    </Suspense>
+  );
 } 

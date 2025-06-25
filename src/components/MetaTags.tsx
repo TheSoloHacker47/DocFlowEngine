@@ -1,5 +1,8 @@
+'use client';
+
 import Head from 'next/head';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
+import { Suspense } from 'react';
 
 interface MetaTagsProps {
   title?: string;
@@ -16,7 +19,7 @@ interface MetaTagsProps {
   noFollow?: boolean;
 }
 
-const MetaTags: React.FC<MetaTagsProps> = ({
+const MetaTagsContent: React.FC<MetaTagsProps> = ({
   title = 'DocFlowEngine - Convert PDF to Word Documents Online',
   description = 'Easily convert PDF documents to editable Word files with DocFlowEngine. Fast, accurate, and secure PDF to DOCX conversion tool.',
   keywords = 'pdf to word, pdf converter, document conversion, pdf to docx, convert pdf, word document, file converter',
@@ -30,9 +33,9 @@ const MetaTags: React.FC<MetaTagsProps> = ({
   noIndex = false,
   noFollow = false,
 }) => {
-  const router = useRouter();
+  const pathname = usePathname();
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://docflowengine.com';
-  const fullCanonicalUrl = canonicalUrl || `${baseUrl}${router.asPath}`;
+  const fullCanonicalUrl = canonicalUrl || `${baseUrl}${pathname}`;
   const fullOgImageUrl = ogImage.startsWith('http') ? ogImage : `${baseUrl}${ogImage}`;
 
   // Construct robots directive
@@ -104,5 +107,11 @@ const MetaTags: React.FC<MetaTagsProps> = ({
     </Head>
   );
 };
+
+const MetaTags: React.FC<MetaTagsProps> = (props) => (
+  <Suspense fallback={null}>
+    <MetaTagsContent {...props} />
+  </Suspense>
+);
 
 export default MetaTags; 
