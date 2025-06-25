@@ -1,5 +1,7 @@
+'use client';
+
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 
 interface BreadcrumbItem {
   name: string;
@@ -13,11 +15,11 @@ interface BreadcrumbProps {
 }
 
 const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className = '' }) => {
-  const router = useRouter();
+  const pathname = usePathname();
   
-  // Generate breadcrumb items from router if not provided
+  // Generate breadcrumb items from pathname if not provided
   const generateBreadcrumbs = (): BreadcrumbItem[] => {
-    const pathSegments = router.asPath.split('/').filter(segment => segment);
+    const pathSegments = pathname.split('/').filter(segment => segment);
     const breadcrumbs: BreadcrumbItem[] = [
       { name: 'Home', href: '/' }
     ];
