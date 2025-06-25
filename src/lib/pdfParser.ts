@@ -887,6 +887,7 @@ async function extractSimpleTable(textItems: TextItem[], pageNumber: number): Pr
     const cells: TableCell[] = [];
     for (let colIndex = 0; colIndex < rowItems.length; colIndex++) {
       const item = rowItems[colIndex];
+      if (!item) continue;
       
       const cell: TableCell = {
         content: item.str.trim(),

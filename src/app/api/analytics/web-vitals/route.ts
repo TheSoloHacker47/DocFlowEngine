@@ -7,7 +7,12 @@ interface WebVitalsData {
   url: string;
   timestamp: number;
   userAgent: string;
-  connection: any;
+  connection: {
+    effectiveType?: string;
+    downlink?: number;
+    rtt?: number;
+    saveData?: boolean;
+  } | null;
 }
 
 export async function POST(request: NextRequest) {

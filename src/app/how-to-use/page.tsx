@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import Layout from '@/components/Layout';
 import MetaTags from '@/components/MetaTags';
 import JsonLd, { createHowToSchema, createFAQSchema } from '@/components/JsonLd';

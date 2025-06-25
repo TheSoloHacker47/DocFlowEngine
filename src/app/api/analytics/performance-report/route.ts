@@ -13,8 +13,17 @@ interface PerformanceReportData {
   metrics: PerformanceMetrics;
   navigation: PerformanceNavigationTiming | null;
   resources: PerformanceResourceTiming[];
-  memory: any;
-  connection: any;
+  memory: {
+    usedJSHeapSize: number;
+    totalJSHeapSize: number;
+    jsHeapSizeLimit: number;
+  } | null;
+  connection: {
+    effectiveType: string;
+    downlink: number;
+    rtt: number;
+    saveData: boolean;
+  } | null;
   url: string;
   timestamp: number;
 }

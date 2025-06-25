@@ -4,16 +4,16 @@ import Breadcrumb, { pageBreadcrumbs } from '@/components/Breadcrumb';
 
 export const metadata: Metadata = {
   title: 'About DocFlowEngine - Our Mission & Technology | PDF to Word Converter',
-  description: 'Learn about DocFlowEngine\'s mission to provide secure, high-quality PDF to Word conversion. Discover our client-side processing technology and commitment to privacy.',
+  description: 'Learn about DocFlowEngine&apos;s mission to provide secure, high-quality PDF to Word conversion. Discover our client-side processing technology and commitment to privacy.',
   keywords: 'about DocFlowEngine, PDF converter technology, document conversion mission, privacy-focused converter, client-side processing',
   openGraph: {
     title: 'About DocFlowEngine - Our Mission & Technology',
-    description: 'Learn about DocFlowEngine\'s mission to provide secure, high-quality PDF to Word conversion with complete privacy protection.',
+    description: 'Learn about DocFlowEngine&apos;s mission to provide secure, high-quality PDF to Word conversion with complete privacy protection.',
     type: 'website',
   },
   twitter: {
     title: 'About DocFlowEngine - Our Mission & Technology',
-    description: 'Learn about DocFlowEngine\'s mission to provide secure, high-quality PDF to Word conversion with complete privacy protection.',
+    description: 'Learn about DocFlowEngine&apos;s mission to provide secure, high-quality PDF to Word conversion with complete privacy protection.',
   },
 };
 
@@ -41,7 +41,7 @@ export default function AboutPage() {
             <div>
               <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Mission</h2>
               <p className="text-lg text-gray-700 leading-relaxed">
-                We believe that converting documents should be straightforward, accessible to everyone, and completely secure. Our mission is to provide a reliable online service that delivers high-quality PDF to Word conversions without compromising your privacy. We've engineered a tool that works entirely in your browser, ensuring your sensitive documents never leave your computer.
+                We believe that converting documents should be straightforward, accessible to everyone, and completely secure. Our mission is to provide a reliable online service that delivers high-quality PDF to Word conversions without compromising your privacy. We&apos;ve engineered a tool that works entirely in your browser, ensuring your sensitive documents never leave your computer.
               </p>
             </div>
 

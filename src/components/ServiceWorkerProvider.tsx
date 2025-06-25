@@ -57,6 +57,9 @@ export default function ServiceWorkerProvider({ children }: ServiceWorkerProvide
         window.removeEventListener('load', registerServiceWorker);
       };
     }
+    
+    // Return undefined for the else case
+    return undefined;
   }, []);
 
   return <>{children}</>;

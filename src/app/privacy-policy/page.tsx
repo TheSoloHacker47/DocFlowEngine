@@ -2,7 +2,7 @@ import Layout from '@/components/Layout';
 
 export default function PrivacyPolicyPage() {
   return (
-    <Layout title="Privacy Policy - DocFlowEngine">
+    <Layout>
       <div className="px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">Privacy Policy</h1>

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://docflowengine.com';
 
@@ -64,7 +64,7 @@ ${pages
 </urlset>`;
 };
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const sitemap = generateSitemap(staticPages);
     
