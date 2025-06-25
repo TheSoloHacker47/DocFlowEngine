@@ -152,27 +152,33 @@ export async function convertPdfToWord(
     
     if (simpleMode) {
       // Simple mode: just extract text and create basic Word document
-      const text = processedContent.fullText;
       const documentTitle = title || processedContent.metadata.title || 'Converted Document';
-      result = await createSimpleWordDocument(text, documentTitle);
+      const wordOptions = {
+        title: documentTitle,
+        author: author || processedContent.metadata.author || 'DocFlowEngine',
+        fontSize,
+        fontFamily,
+        lineSpacing
+      };
+      result = await createSimpleWordDocument(processedContent, wordOptions);
       
       // Create metadata for simple mode
       const simpleMetadata = {
         originalTitle: processedContent.metadata.title,
         originalAuthor: processedContent.metadata.author,
         originalPages: processedContent.totalPages,
-        convertedPages: 1, // Simple mode creates single-page document
-        wordCount: estimateWordCount(text),
-        characterCount: text.length,
+        convertedPages: result.metadata.pageCount,
+        wordCount: result.metadata.wordCount,
+        characterCount: result.metadata.characterCount,
         conversionTime: Date.now() - startTime,
-        createdAt: new Date()
+        createdAt: result.metadata.createdAt
       };
       
       reportProgress('complete', 100, 'Conversion complete (simple mode)');
       
       return {
         success: true,
-        blob: result,
+        blob: result.blob,
         metadata: simpleMetadata,
         warnings: warnings.length > 0 ? warnings : undefined
       };
@@ -280,7 +286,9 @@ async function processAndValidateContent(
 
 /**
  * Estimate word count from text
+ * @deprecated - This function is no longer used, but kept for potential future use
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function estimateWordCount(text: string): number {
   return text.trim().split(/\s+/).filter(word => word.length > 0).length;
 }

@@ -8,18 +8,32 @@ export interface FileUploadState {
 }
 
 export interface ConversionState {
-  isConverting: boolean;
+  status: 'idle' | 'processing' | 'success' | 'error';
   progress: number;
   error: string | null;
-  result: ConversionResult | null;
+  result: unknown | null; // Will be typed as ConversionResult from library in usage
 }
 
 export interface ConversionResult {
   success: boolean;
+  blob?: Blob;
+  metadata?: {
+    originalTitle?: string;
+    originalAuthor?: string;
+    originalPages?: number;
+    convertedPages?: number;
+    wordCount?: number;
+    characterCount?: number;
+    conversionTime?: number;
+    createdAt?: Date;
+    pages?: number;
+    fileName?: string;
+    fileSize?: number;
+    processingTime?: number;
+  };
+  error?: string;
+  warnings?: string[];
   downloadUrl?: string;
-  fileName?: string;
-  fileSize?: number;
-  processingTime?: number;
 }
 
 export type ConversionFormat = 'docx' | 'txt' | 'html';

@@ -1,0 +1,296 @@
+name: Performance Testing
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run performance tests daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      test_url:
+        description: 'URL to test (optional, defaults to preview deployment)'
+        required: false
+        type: string
+      run_full_suite:
+        description: 'Run full performance test suite'
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  performance-audit:
+    name: Performance Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build application
+        run: npm run build
+        env:
+          NEXT_PUBLIC_GA_ID: ${{ secrets.GA_ID }}
+          
+      - name: Start application
+        run: |
+          npm run start &
+          sleep 10
+          curl --retry 5 --retry-delay 5 --retry-connrefused http://localhost:3000
+        
+      - name: Run Lighthouse CI
+        run: npm run perf:lighthouse
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+          
+      - name: Run custom performance tests
+        run: npm run perf:test
+        continue-on-error: true
+        
+      - name: Upload performance reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: performance-reports-${{ github.sha }}
+          path: |
+            performance-reports/
+            .lighthouseci/
+          retention-days: 30
+          
+      - name: Comment PR with performance results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Try to read performance test results
+            let performanceComment = '## 🚀 Performance Test Results\n\n';
+            
+            try {
+              // Check if Lighthouse results exist
+              const lhciDir = '.lighthouseci';
+              if (fs.existsSync(lhciDir)) {
+                performanceComment += '### Lighthouse Audit\n';
+                performanceComment += '✅ Lighthouse audit completed successfully.\n\n';
+              }
+              
+              // Check for custom performance test results
+              const reportsDir = 'performance-reports';
+              if (fs.existsSync(reportsDir)) {
+                const files = fs.readdirSync(reportsDir);
+                const testResults = files.filter(f => f.startsWith('performance-test-') && f.endsWith('.json'));
+                
+                if (testResults.length > 0) {
+                  const latestResult = testResults.sort().pop();
+                  const resultPath = path.join(reportsDir, latestResult);
+                  const results = JSON.parse(fs.readFileSync(resultPath, 'utf8'));
+                  
+                  performanceComment += '### Custom Performance Tests\n';
+                  performanceComment += `- **Average Performance Score**: ${results.summary.averagePerformanceScore}%\n`;
+                  performanceComment += `- **Pages Passing Thresholds**: ${results.summary.pagesPassingThresholds}/${results.results.length}\n`;
+                  performanceComment += `- **Total Issues Found**: ${results.summary.totalIssues}\n`;
+                  performanceComment += `- **Critical Issues**: ${results.summary.criticalIssues}\n\n`;
+                  
+                  if (results.summary.criticalIssues > 0) {
+                    performanceComment += '⚠️ **Critical performance issues detected!**\n\n';
+                  }
+                  
+                  if (results.summary.topRecommendations && results.summary.topRecommendations.length > 0) {
+                    performanceComment += '### Top Recommendations\n';
+                    results.summary.topRecommendations.slice(0, 3).forEach((rec, index) => {
+                      performanceComment += `${index + 1}. ${rec.recommendation}\n`;
+                    });
+                    performanceComment += '\n';
+                  }
+                }
+              }
+              
+              performanceComment += '📊 Detailed reports are available in the workflow artifacts.\n';
+              
+            } catch (error) {
+              performanceComment += '❌ Error reading performance test results.\n';
+              console.error('Error reading performance results:', error);
+            }
+            
+            // Find existing performance comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const existingComment = comments.find(comment => 
+              comment.user.type === 'Bot' && comment.body.includes('Performance Test Results')
+            );
+            
+            if (existingComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: performanceComment
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: performanceComment
+              });
+            }
+
+  performance-monitoring:
+    name: Performance Monitoring
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: performance-audit
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build and test production deployment
+        if: inputs.test_url != ''
+        run: |
+          # Test the provided URL
+          TEST_URL="${{ inputs.test_url }}" npm run perf:test
+        env:
+          TEST_URL: ${{ inputs.test_url }}
+          
+      - name: Send performance metrics to monitoring service
+        if: always()
+        run: |
+          echo "Sending performance metrics to monitoring service..."
+          # Here you would typically send metrics to your monitoring service
+          # Example: DataDog, New Relic, custom analytics endpoint
+          
+          # curl -X POST "https://api.datadoghq.com/api/v1/series" \
+          #   -H "Content-Type: application/json" \
+          #   -H "DD-API-KEY: ${{ secrets.DATADOG_API_KEY }}" \
+          #   -d @performance-metrics.json
+          
+      - name: Create performance issue if thresholds exceeded
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `🚨 Performance Regression Detected - ${new Date().toISOString().split('T')[0]}`;
+            const body = `
+            ## Performance Regression Alert
+            
+            Critical performance issues have been detected in the latest deployment.
+            
+            **Details:**
+            - **Commit**: ${context.sha}
+            - **Branch**: ${context.ref}
+            - **Workflow**: ${context.workflow}
+            - **Run ID**: ${context.runId}
+            
+            **Next Steps:**
+            1. Review the performance test results in the workflow artifacts
+            2. Identify the root cause of the performance regression
+            3. Implement fixes and re-test
+            4. Consider rolling back if the issue is critical
+            
+            **Links:**
+            - [Workflow Run](${context.payload.repository.html_url}/actions/runs/${context.runId})
+            - [Performance Reports](${context.payload.repository.html_url}/actions/runs/${context.runId}#artifacts)
+            
+            This issue was automatically created by the performance monitoring workflow.
+            `;
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['performance', 'bug', 'critical']
+            });
+
+  lighthouse-budget-check:
+    name: Lighthouse Budget Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build application
+        run: npm run build
+        
+      - name: Start application
+        run: |
+          npm run start &
+          sleep 10
+          
+      - name: Run Lighthouse with budget enforcement
+        run: |
+          npx lighthouse http://localhost:3000 \
+            --budget-path=lighthouse-budget.json \
+            --output=json \
+            --output-path=lighthouse-results.json \
+            --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage"
+            
+      - name: Check performance budget
+        run: |
+          node -e "
+            const results = require('./lighthouse-results.json');
+            const budgetResults = results.audits['performance-budget'];
+            
+            if (budgetResults && budgetResults.details && budgetResults.details.items) {
+              const overBudget = budgetResults.details.items.filter(item => item.sizeOverBudget > 0);
+              
+              if (overBudget.length > 0) {
+                console.log('❌ Performance budget exceeded:');
+                overBudget.forEach(item => {
+                  console.log(\`- \${item.resourceType}: \${item.size} (over budget by \${item.sizeOverBudget})\`);
+                });
+                process.exit(1);
+              } else {
+                console.log('✅ All resources are within performance budget');
+              }
+            } else {
+              console.log('ℹ️ No performance budget data available');
+            }
+          "
+          
+      - name: Upload Lighthouse results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-budget-results-${{ github.sha }}
+          path: lighthouse-results.json
+          retention-days: 30 

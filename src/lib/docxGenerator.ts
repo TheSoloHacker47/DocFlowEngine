@@ -1,21 +1,30 @@
-import { 
-  Document, 
-  Paragraph, 
-  TextRun, 
-  HeadingLevel, 
-  AlignmentType,
+import {
+  Document,
   Packer,
+  Paragraph,
+  TextRun,
+  ImageRun,
   Table,
-  Header,
-  Footer,
-  PageNumber,
-  NumberFormat,
-  convertInchesToTwip,
-  ISectionOptions,
-  IRunOptions
+  TableRow,
+  TableCell,
+  WidthType,
+  AlignmentType,
+  convertInchesToTwip
 } from 'docx';
 
-import type { PDFParseResult, PDFTextItem } from './pdfParser';
+import type { PDFParseResult, PDFImageItem, PDFTable } from './pdfParser';
+
+export interface ImagePositionOptions {
+  alignment?: 'left' | 'center' | 'right';
+  margins?: {
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+  };
+  textWrapping?: 'inline' | 'square' | 'tight';
+  floating?: boolean;
+}
 
 export interface WordDocumentOptions {
   title?: string;
@@ -35,10 +44,11 @@ export interface WordDocumentOptions {
     left?: number;
     right?: number;
   };
+  imageOptions?: ImagePositionOptions;
 }
 
 export interface WordGenerationResult {
-  document: Document;
+  success: boolean;
   blob: Blob;
   metadata: {
     pageCount: number;
@@ -49,325 +59,424 @@ export interface WordGenerationResult {
 }
 
 export class WordGenerationError extends Error {
-  constructor(message: string, public cause?: Error) {
+  public readonly originalError?: Error;
+
+  constructor(message: string, originalError?: Error) {
     super(message);
     this.name = 'WordGenerationError';
+    if (originalError) {
+      this.originalError = originalError;
+    }
   }
 }
 
 /**
- * Generates a Word document from parsed PDF content
- * @param pdfContent - Parsed PDF content
- * @param options - Word document generation options
- * @returns Promise<WordGenerationResult> - Generated Word document
+ * Convert image blob to buffer for docx processing
  */
-export async function generateWordDocument(
-  pdfContent: PDFParseResult,
-  options: WordDocumentOptions = {}
-): Promise<WordGenerationResult> {
+async function convertImageBlobToBuffer(imageBlob: Blob): Promise<Buffer> {
+  const arrayBuffer = await imageBlob.arrayBuffer();
+  return Buffer.from(arrayBuffer);
+}
+
+/**
+ * Calculate optimal image dimensions for Word document
+ */
+function calculateWordImageDimensions(width: number, height: number, maxWidth = 500): { width: number; height: number } {
+  if (width <= maxWidth) {
+    return { width, height };
+  }
+  
+  const aspectRatio = height / width;
+  return {
+    width: maxWidth,
+    height: Math.round(maxWidth * aspectRatio)
+  };
+}
+
+/**
+ * Get alignment type for docx based on string value
+ */
+function getAlignmentType(alignment: string): typeof AlignmentType[keyof typeof AlignmentType] {
+  switch (alignment.toLowerCase()) {
+    case 'left':
+      return AlignmentType.LEFT;
+    case 'center':
+      return AlignmentType.CENTER;
+    case 'right':
+      return AlignmentType.RIGHT;
+    default:
+      return AlignmentType.LEFT;
+  }
+}
+
+/**
+ * Create an ImageRun with advanced positioning options
+ */
+function createImageRun(
+  imageBuffer: Buffer,
+  width: number,
+  height: number,
+  format: string
+): ImageRun {
+  // Use the basic ImageRun constructor
+  return new ImageRun({
+    data: imageBuffer,
+    transformation: {
+      width,
+      height,
+    },
+    type: format === 'JPEG' ? 'jpg' : 'png'
+  });
+}
+
+/**
+ * Generate error placeholder for failed image processing
+ */
+function createImageErrorPlaceholder(errorMessage: string): Paragraph {
+  return new Paragraph({
+    children: [
+      new TextRun({
+        text: `[Image could not be loaded: ${errorMessage}]`,
+        italics: true,
+        color: '999999'
+      })
+    ],
+    spacing: {
+      before: 200,
+      after: 200
+    }
+  });
+}
+
+/**
+ * Process image with comprehensive error handling
+ */
+async function processImageSafely(
+  image: PDFImageItem,
+  options: ImagePositionOptions = {}
+): Promise<Paragraph> {
   try {
-    const {
-      title = 'Converted Document',
-      author = 'DocFlowEngine',
-      subject = 'PDF to Word Conversion',
-      includeMetadata = true,
-      includePageNumbers = true,
-      includeHeader = true,
-      includeFooter = true,
-      preserveFormatting = true,
-      fontSize = 11,
-      fontFamily = 'Calibri',
-      lineSpacing = 1.15,
-      margins = {}
-    } = options;
-
-    // Default margins in twips (1/20th of a point)
-    const defaultMargins = {
-      top: convertInchesToTwip(1),
-      bottom: convertInchesToTwip(1),
-      left: convertInchesToTwip(1),
-      right: convertInchesToTwip(1),
-      ...margins
-    };
-
-    // Create document sections
-    const sections: ISectionOptions[] = [];
-
-    // Create header if requested
-    const headers = includeHeader ? {
-      default: new Header({
-        children: [
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: title,
-                size: fontSize * 2,
-                bold: true,
-                color: '666666'
-              })
-            ],
-            alignment: AlignmentType.CENTER,
-            spacing: { after: 200 }
-          })
-        ]
-      })
-    } : undefined;
-
-    // Create footer if requested
-    const footers = includeFooter ? {
-      default: new Footer({
-        children: [
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: 'Converted from PDF • Page ',
-                size: (fontSize - 1) * 2,
-                color: '888888'
-              }),
-              ...(includePageNumbers ? [
-                new TextRun({
-                  children: [PageNumber.CURRENT],
-                  size: (fontSize - 1) * 2,
-                  color: '888888'
-                }),
-                new TextRun({
-                  text: ' of ',
-                  size: (fontSize - 1) * 2,
-                  color: '888888'
-                }),
-                new TextRun({
-                  children: [PageNumber.TOTAL_PAGES],
-                  size: (fontSize - 1) * 2,
-                  color: '888888'
-                })
-              ] : [])
-            ],
-            alignment: AlignmentType.CENTER,
-            spacing: { before: 200 }
-          })
-        ]
-      })
-    } : undefined;
-
-    // Add title page if metadata is included
-    if (includeMetadata && pdfContent.metadata) {
-      const titlePageChildren = [
-        new Paragraph({
-          children: [
-            new TextRun({
-              text: pdfContent.metadata.title || title,
-              size: (fontSize + 6) * 2,
-              bold: true
-            })
-          ],
-          heading: HeadingLevel.TITLE,
-          alignment: AlignmentType.CENTER,
-          spacing: { after: 400 }
-        })
-      ];
-
-      // Add metadata information
-      if (pdfContent.metadata.author) {
-        titlePageChildren.push(
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Author: ${pdfContent.metadata.author}`,
-                size: fontSize * 2,
-                italics: true
-              })
-            ],
-            alignment: AlignmentType.CENTER,
-            spacing: { after: 200 }
-          })
-        );
-      }
-
-      if (pdfContent.metadata.subject) {
-        titlePageChildren.push(
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Subject: ${pdfContent.metadata.subject}`,
-                size: fontSize * 2
-              })
-            ],
-            alignment: AlignmentType.CENTER,
-            spacing: { after: 200 }
-          })
-        );
-      }
-
-      if (pdfContent.metadata.creationDate) {
-        titlePageChildren.push(
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Original Creation Date: ${pdfContent.metadata.creationDate.toLocaleDateString()}`,
-                size: (fontSize - 1) * 2,
-                color: '666666'
-              })
-            ],
-            alignment: AlignmentType.CENTER,
-            spacing: { after: 200 }
-          })
-        );
-      }
-
-      // Add conversion info
-      titlePageChildren.push(
-        new Paragraph({
-          children: [
-            new TextRun({
-              text: `Converted on: ${new Date().toLocaleDateString()}`,
-              size: (fontSize - 1) * 2,
-              color: '666666'
-            })
-          ],
-          alignment: AlignmentType.CENTER,
-          spacing: { after: 400 }
-        }),
-        new Paragraph({
-          children: [
-            new TextRun({
-              text: `Total Pages: ${pdfContent.totalPages}`,
-              size: fontSize * 2
-            })
-          ],
-          alignment: AlignmentType.CENTER,
-          spacing: { after: 200 }
-        })
-      );
-
-      sections.push({
-        ...(headers && { headers }),
-        ...(footers && { footers }),
-        properties: {
-          page: {
-            margin: defaultMargins,
-            pageNumbers: {
-              start: 1,
-              formatType: NumberFormat.DECIMAL
-            }
-          }
-        },
-        children: titlePageChildren
-      });
+    if (!image.blob) {
+      console.warn(`⚠️ Image ${image.id} has no blob data`);
+      return createImageErrorPlaceholder('No image data available');
     }
 
-    // Process PDF pages and convert to Word content
-    const contentChildren: (Paragraph | Table)[] = [];
+    // Convert image blob to buffer
+    const imageBuffer = await convertImageBlobToBuffer(image.blob);
+    
+    // Calculate optimal dimensions
+    const dimensions = calculateWordImageDimensions(image.width, image.height);
+    
+    // Create image run with positioning options
+    const imageRun = createImageRun(
+      imageBuffer,
+      dimensions.width,
+      dimensions.height,
+      image.format
+    );
 
-    for (const page of pdfContent.pages) {
-      // Add page break for pages after the first (if not the first section)
-      if (page.pageNumber > 1 || includeMetadata) {
-        contentChildren.push(
-          new Paragraph({
-            children: [new TextRun({ text: '', break: 1 })],
-            pageBreakBefore: true
-          })
-        );
+    // Create paragraph with alignment and spacing
+    const alignment = options.alignment ? getAlignmentType(options.alignment) : AlignmentType.LEFT;
+    
+    return new Paragraph({
+      children: [imageRun],
+      alignment,
+      spacing: {
+        before: convertInchesToTwip(options.margins?.top || 0.1),
+        after: convertInchesToTwip(options.margins?.bottom || 0.1),
       }
-
-      // Add page heading
-      contentChildren.push(
-        new Paragraph({
-          children: [
-            new TextRun({
-              text: `Page ${page.pageNumber}`,
-              size: (fontSize + 2) * 2,
-              bold: true,
-              color: '333333'
-            })
-          ],
-          heading: HeadingLevel.HEADING_2,
-          spacing: { before: 400, after: 200 }
-        })
-      );
-
-      // Convert page content to Word paragraphs
-      if (preserveFormatting) {
-        // Group text items by approximate lines based on Y position
-        const lines = groupTextItemsByLines(page.textItems);
-        
-        for (const line of lines) {
-          const paragraph = createFormattedParagraph(line, fontSize, fontFamily, lineSpacing);
-          contentChildren.push(paragraph);
-        }
-      } else {
-        // Simple text conversion
-        const paragraphs = page.rawText.split('\n').filter(text => text.trim());
-        
-        for (const text of paragraphs) {
-          if (text.trim()) {
-            contentChildren.push(
-              new Paragraph({
-                children: [
-                  new TextRun({
-                    text: text.trim(),
-                    size: fontSize * 2,
-                    font: fontFamily
-                  })
-                ],
-                spacing: { 
-                  line: Math.round(lineSpacing * 240),
-                  lineRule: 'auto',
-                  after: 120
-                }
-              })
-            );
-          }
-        }
-      }
-    }
-
-    // Add content section
-    const contentSectionOptions: ISectionOptions = {
-      ...((!includeMetadata && headers) ? { headers } : {}),
-      ...((!includeMetadata && footers) ? { footers } : {}),
-      properties: {
-        page: {
-          margin: defaultMargins,
-          pageNumbers: includeMetadata ? {
-            start: 2,
-            formatType: NumberFormat.DECIMAL
-          } : {
-            start: 1,
-            formatType: NumberFormat.DECIMAL
-          }
-        }
-      },
-      children: contentChildren
-    };
-
-    sections.push(contentSectionOptions);
-
-    // Create the document
-    const document = new Document({
-      creator: author,
-      title: pdfContent.metadata.title || title,
-      description: subject,
-      sections
     });
 
-    // Generate blob
-    const blob = await Packer.toBlob(document);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`❌ Failed to process image ${image.id}:`, error);
+    return createImageErrorPlaceholder(errorMessage);
+  }
+}
 
-    // Calculate metadata
-    const wordCount = estimateWordCount(pdfContent.fullText);
-    const characterCount = pdfContent.fullText.length;
+/**
+ * Create a Word table from PDF table data
+ */
+function createWordTable(pdfTable: PDFTable): Table {
+  try {
+    console.log(`📊 Creating Word table: ${pdfTable.id} (${pdfTable.rowCount}x${pdfTable.columnCount})`);
+    
+    // Create table rows
+    const tableRows: TableRow[] = [];
+    
+    for (const pdfRow of pdfTable.rows) {
+      // Create table cells for this row
+      const tableCells: TableCell[] = [];
+      
+      for (const pdfCell of pdfRow.cells) {
+        const tableCell = new TableCell({
+          children: [
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: pdfCell.content || '',
+                  size: 20 // 10pt font
+                })
+              ]
+            })
+          ],
+          width: {
+            size: Math.max(pdfCell.width * 20, 1000), // Convert to twips with minimum width
+            type: WidthType.DXA
+          }
+        });
+        
+        tableCells.push(tableCell);
+      }
+      
+      // Ensure all rows have the same number of cells (pad with empty cells if needed)
+      while (tableCells.length < pdfTable.columnCount) {
+        tableCells.push(new TableCell({
+          children: [new Paragraph({ children: [new TextRun({ text: '', size: 20 })] })],
+          width: { size: 1000, type: WidthType.DXA }
+        }));
+      }
+      
+      const tableRow = new TableRow({
+        children: tableCells
+      });
+      
+      tableRows.push(tableRow);
+    }
+    
+    // Create the table with proper styling
+    const table = new Table({
+      rows: tableRows,
+      width: {
+        size: 100,
+        type: WidthType.PERCENTAGE
+      },
+      borders: {
+        top: { style: 'single', size: 1, color: '000000' },
+        bottom: { style: 'single', size: 1, color: '000000' },
+        left: { style: 'single', size: 1, color: '000000' },
+        right: { style: 'single', size: 1, color: '000000' },
+        insideHorizontal: { style: 'single', size: 1, color: '000000' },
+        insideVertical: { style: 'single', size: 1, color: '000000' }
+      }
+    });
+    
+    console.log(`✅ Successfully created Word table: ${pdfTable.id}`);
+    return table;
+    
+  } catch (error) {
+    console.error(`❌ Failed to create Word table ${pdfTable.id}:`, error);
+    // Return a simple error table
+    return new Table({
+      rows: [
+        new TableRow({
+          children: [
+            new TableCell({
+              children: [
+                new Paragraph({
+                  children: [
+                    new TextRun({
+                      text: `[Table could not be created: ${error instanceof Error ? error.message : 'Unknown error'}]`,
+                      italics: true,
+                      color: '999999'
+                    })
+                  ]
+                })
+              ]
+            })
+          ]
+        })
+      ]
+    });
+  }
+}
+
+/**
+ * Process table with error handling
+ */
+function processTableSafely(table: PDFTable): Table {
+  try {
+    return createWordTable(table);
+  } catch (error) {
+    console.error(`❌ Failed to process table ${table.id}:`, error);
+    // Return error placeholder table
+    return new Table({
+      rows: [
+        new TableRow({
+          children: [
+            new TableCell({
+              children: [
+                new Paragraph({
+                  children: [
+                    new TextRun({
+                      text: `[Table processing failed: ${table.id}]`,
+                      italics: true,
+                      color: '999999'
+                    })
+                  ]
+                })
+              ]
+            })
+          ]
+        })
+      ]
+    });
+  }
+}
+
+/**
+ * Generate a simple Word document from processed PDF content with images
+ */
+export async function createSimpleWordDocument(
+  content: PDFParseResult,
+  options: Partial<WordDocumentOptions> = {}
+): Promise<WordGenerationResult> {
+  try {
+    console.log(`📄 Creating Word document with ${content.images.length} images...`);
+    
+    // Create document elements
+    const documentChildren: (Paragraph | Table)[] = [];
+    
+    // Process content page by page to maintain order
+    for (let pageNum = 1; pageNum <= content.totalPages; pageNum++) {
+      const page = content.pages.find(p => p.pageNumber === pageNum);
+      if (!page) continue;
+      
+      // Add page text content
+      if (page.rawText.trim()) {
+        const textParagraphs = page.rawText
+          .split('\n')
+          .filter(line => line.trim().length > 0)
+          .map(line => new Paragraph({
+            children: [
+              new TextRun({
+                text: line.trim(),
+                font: options.fontFamily || 'Times New Roman',
+                size: (options.fontSize || 12) * 2, // Convert to half-points
+              })
+            ]
+          }));
+        
+        documentChildren.push(...textParagraphs);
+      }
+      
+      // Add page images
+      const pageImages = page.images.filter(img => img.blob);
+      if (pageImages.length > 0) {
+        console.log(`🖼️ Adding ${pageImages.length} images from page ${pageNum}...`);
+        
+        for (const image of pageImages) {
+          try {
+            if (!image.blob) continue;
+            
+            // Process image with comprehensive error handling
+            const imageParagraph = await processImageSafely(image, options.imageOptions || {});
+            
+            documentChildren.push(imageParagraph);
+            console.log(`✅ Added image: ${image.id} (${image.width}x${image.height})`);
+            
+          } catch (imageError) {
+            console.warn(`⚠️ Failed to add image ${image.id}:`, imageError);
+            // Continue with other images
+          }
+        }
+      }
+
+      // Add page tables
+      const pageTables = page.tables || [];
+      if (pageTables.length > 0) {
+        console.log(`📊 Adding ${pageTables.length} tables from page ${pageNum}...`);
+        
+        for (const table of pageTables) {
+          try {
+            // Process table with comprehensive error handling
+            const wordTable = processTableSafely(table);
+            
+            documentChildren.push(wordTable);
+            console.log(`✅ Added table: ${table.id} (${table.rowCount}x${table.columnCount})`);
+            
+            // Add spacing after table
+            documentChildren.push(new Paragraph({
+              children: [new TextRun({ text: '' })],
+              spacing: { after: 200 }
+            }));
+            
+          } catch (tableError) {
+            console.warn(`⚠️ Failed to add table ${table.id}:`, tableError);
+            // Continue with other tables
+          }
+        }
+      }
+      
+      // Add page break between pages (except for last page)
+      if (pageNum < content.totalPages) {
+        documentChildren.push(new Paragraph({
+          children: [new TextRun({ text: '', break: 1 })]
+        }));
+      }
+    }
+    
+    // Fallback: if no content was processed, use the full text
+    if (documentChildren.length === 0) {
+      const fallbackParagraphs = content.fullText
+        .split('\n')
+        .filter(line => line.trim().length > 0)
+        .map(line => new Paragraph({
+          children: [
+            new TextRun({
+              text: line.trim(),
+              font: options.fontFamily || 'Times New Roman',
+              size: (options.fontSize || 12) * 2,
+            })
+          ]
+        }));
+      
+      documentChildren.push(...fallbackParagraphs);
+    }
+
+    const doc = new Document({
+      sections: [{
+        properties: {},
+        children: documentChildren
+      }]
+    });
+
+    const buffer = await Packer.toBuffer(doc);
+    const blob = new Blob([buffer], { 
+      type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
+    });
+
+    console.log(`✅ Word document created successfully with ${content.images.length} images and ${content.tables.length} tables`);
 
     return {
-      document,
+      success: true,
       blob,
       metadata: {
-        pageCount: pdfContent.totalPages,
-        wordCount,
-        characterCount,
+        pageCount: content.totalPages,
+        wordCount: content.fullText.split(/\s+/).length,
+        characterCount: content.fullText.length,
         createdAt: new Date()
       }
     };
 
+  } catch (error) {
+    throw new WordGenerationError(
+      `Failed to create simple Word document: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      error instanceof Error ? error : undefined
+    );
+  }
+}
+
+/**
+ * Generate a Word document from processed PDF content
+ */
+export async function generateWordDocument(
+  content: PDFParseResult,
+  options: WordDocumentOptions = {}
+): Promise<WordGenerationResult> {
+  try {
+    // For now, use the simple approach
+    return await createSimpleWordDocument(content, options);
   } catch (error) {
     throw new WordGenerationError(
       `Failed to generate Word document: ${error instanceof Error ? error.message : 'Unknown error'}`,
@@ -376,146 +485,4 @@ export async function generateWordDocument(
   }
 }
 
-/**
- * Groups text items by approximate lines based on Y position
- */
-function groupTextItemsByLines(textItems: PDFTextItem[]): PDFTextItem[][] {
-  if (!textItems.length) return [];
-
-  // Sort by Y position (top to bottom) then X position (left to right)
-  const sortedItems = [...textItems].sort((a, b) => b.y - a.y || a.x - b.x);
-  
-  const lines: PDFTextItem[][] = [];
-  let currentLine: PDFTextItem[] = [];
-  let currentY: number | null = null;
-  const lineThreshold = 5; // Pixels tolerance for same line
-
-  for (const item of sortedItems) {
-    if (currentY === null || Math.abs(item.y - currentY) <= lineThreshold) {
-      // Same line or first item
-      currentLine.push(item);
-      currentY = item.y;
-    } else {
-      // New line
-      if (currentLine.length > 0) {
-        lines.push([...currentLine]);
-      }
-      currentLine = [item];
-      currentY = item.y;
-    }
-  }
-
-  // Add the last line
-  if (currentLine.length > 0) {
-    lines.push(currentLine);
-  }
-
-  return lines;
-}
-
-/**
- * Creates a formatted paragraph from a line of text items
- */
-function createFormattedParagraph(
-  lineItems: PDFTextItem[],
-  baseFontSize: number,
-  fontFamily: string,
-  lineSpacing: number
-): Paragraph {
-  // Sort items by X position (left to right)
-  const sortedItems = [...lineItems].sort((a, b) => a.x - b.x);
-  
-  const textRuns: TextRun[] = [];
-  
-  for (let i = 0; i < sortedItems.length; i++) {
-    const item = sortedItems[i];
-    const nextItem = sortedItems[i + 1];
-    
-    if (!item) continue;
-    
-    // Create text run with formatting
-    const runOptions: IRunOptions = {
-      text: item.text,
-      size: Math.max(item.fontSize * 2, baseFontSize * 2), // Convert to half-points
-      font: fontFamily,
-      // Apply basic formatting based on font size
-      bold: item.fontSize > baseFontSize + 2 // Likely a heading
-    };
-
-    textRuns.push(new TextRun(runOptions));
-    
-    // Add space between items if there's a significant gap
-    if (nextItem && (nextItem.x - (item.x + item.width)) > 10) {
-      textRuns.push(new TextRun({ text: ' ' }));
-    }
-  }
-
-  return new Paragraph({
-    children: textRuns,
-    spacing: {
-      line: Math.round(lineSpacing * 240),
-      lineRule: 'auto',
-      after: 120
-    }
-  });
-}
-
-/**
- * Estimates word count from text
- */
-function estimateWordCount(text: string): number {
-  return text.trim().split(/\s+/).filter(word => word.length > 0).length;
-}
-
-/**
- * Creates a simple Word document with basic formatting
- * @param text - Plain text content
- * @param title - Document title
- * @returns Promise<Blob> - Generated Word document blob
- */
-export async function createSimpleWordDocument(
-  text: string,
-  title: string = 'Converted Document'
-): Promise<Blob> {
-  try {
-    const paragraphs = text.split('\n\n').filter(p => p.trim());
-    
-    const children = [
-      new Paragraph({
-        children: [
-          new TextRun({
-            text: title,
-            size: 28,
-            bold: true
-          })
-        ],
-        heading: HeadingLevel.HEADING_1,
-        spacing: { after: 400 }
-      }),
-      ...paragraphs.map(paragraph => 
-        new Paragraph({
-          children: [
-            new TextRun({
-              text: paragraph.trim(),
-              size: 22
-            })
-          ],
-          spacing: { after: 200 }
-        })
-      )
-    ];
-
-    const document = new Document({
-      sections: [{
-        children
-      }]
-    });
-
-    return await Packer.toBlob(document);
-  } catch (error) {
-    throw new WordGenerationError(
-      `Failed to create simple Word document: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      error instanceof Error ? error : undefined
-    );
-  }
-} 
+ 

@@ -60,41 +60,10 @@ export type {
 } from '../types';
 
 /**
- * Default conversion options for common use cases
+ * Professional conversion options - the only mode we support
+ * Everyone deserves the best quality conversion with all features
  */
-export const DEFAULT_CONVERSION_OPTIONS: ConversionOptions = {
-  preserveFormatting: true,
-  includeMetadata: true,
-  includePageNumbers: true,
-  includeHeaders: true,
-  includeFooters: true,
-  fontSize: 11,
-  fontFamily: 'Calibri',
-  lineSpacing: 1.15,
-  simpleMode: false,
-  enableProgressCallback: true
-};
-
-/**
- * Simple conversion options for basic text extraction
- */
-export const SIMPLE_CONVERSION_OPTIONS: ConversionOptions = {
-  preserveFormatting: false,
-  includeMetadata: false,
-  includePageNumbers: false,
-  includeHeaders: false,
-  includeFooters: false,
-  fontSize: 12,
-  fontFamily: 'Times New Roman',
-  lineSpacing: 1.0,
-  simpleMode: true,
-  enableProgressCallback: true
-};
-
-/**
- * High-quality conversion options for professional documents
- */
-export const PROFESSIONAL_CONVERSION_OPTIONS: ConversionOptions = {
+export const CONVERSION_OPTIONS: ConversionOptions = {
   preserveFormatting: true,
   includeMetadata: true,
   includePageNumbers: true,
@@ -114,42 +83,16 @@ export const PROFESSIONAL_CONVERSION_OPTIONS: ConversionOptions = {
 };
 
 /**
- * Quick conversion function with default options
+ * Main conversion function with professional-quality output
  * @param file - PDF file to convert
  * @param progressCallback - Optional progress callback
  * @returns Promise<ConversionResult> - Conversion result
  */
-export async function quickConvert(
+export async function convertPdfToWordDocument(
   file: File,
   progressCallback?: (progress: ConversionProgress) => void
 ): Promise<ConversionResult> {
-  return convertPdfToWord(file, DEFAULT_CONVERSION_OPTIONS, progressCallback);
-}
-
-/**
- * Simple text-only conversion function
- * @param file - PDF file to convert
- * @param progressCallback - Optional progress callback
- * @returns Promise<ConversionResult> - Conversion result
- */
-export async function simpleConvert(
-  file: File,
-  progressCallback?: (progress: ConversionProgress) => void
-): Promise<ConversionResult> {
-  return convertPdfToWord(file, SIMPLE_CONVERSION_OPTIONS, progressCallback);
-}
-
-/**
- * Professional conversion function with high-quality output
- * @param file - PDF file to convert
- * @param progressCallback - Optional progress callback
- * @returns Promise<ConversionResult> - Conversion result
- */
-export async function professionalConvert(
-  file: File,
-  progressCallback?: (progress: ConversionProgress) => void
-): Promise<ConversionResult> {
-  return convertPdfToWord(file, PROFESSIONAL_CONVERSION_OPTIONS, progressCallback);
+  return convertPdfToWord(file, CONVERSION_OPTIONS, progressCallback);
 }
 
 /**

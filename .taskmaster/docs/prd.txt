@@ -12,10 +12,10 @@ For the MVP, the feature set is intentionally minimal to ensure a rapid path to 
 What it does: Allows the user to select a PDF file from their local device for conversion.
 Why it's important: This is the primary entry point for the tool. It must be obvious, accessible, and frictionless to encourage immediate use.
 How it works at a high level: The UI will feature a prominent component that accepts files via a traditional file selection dialog or a modern drag-and-drop interface.
-2. Client-Side Conversion Engine
-What it does: Reads the structure and content of the user-provided PDF and reconstructs it into a .docx file format.
-Why it's important: This is the core functionality and the primary value proposition. Its quality and privacy-preserving nature (client-side) are the key differentiators.
-How it works at a high level: The tool will use the pdf.js library to parse the PDF file in the browser. It will then iterate through the parsed content (text, basic structure), feeding it into the docx.js library to generate a Word document in memory.
+2. Advanced Client-Side Conversion Engine
+What it does: Reads the complete structure and content of the user-provided PDF and reconstructs it into a high-quality .docx file format with full preservation of images, tables, and formatting.
+Why it's important: This is the core functionality and the primary value proposition. Its comprehensive conversion quality and privacy-preserving nature (client-side) are the key differentiators from basic text-only converters.
+How it works at a high level: The tool uses the pdf.js library to parse the PDF file in the browser, extracting text, images, tables, and formatting. It then processes this content through specialized conversion functions and feeds it into the docx.js library to generate a professional-quality Word document in memory.
 3. Real-Time User Feedback
 What it does: Clearly communicates the status of the conversion process to the user.
 Why it's important: Prevents user confusion and abandonment. A user needs to know if the tool is working, processing, has succeeded, or has failed.
@@ -72,9 +72,14 @@ Create a main layout component containing the site header, footer, and navigatio
 Converter UI:
 Build the main tool interface on the homepage (/).
 Implement the file uploader component (supporting click-to-select and drag-and-drop).
-Core Conversion Logic:
-Integrate pdf.js and docx.js.
-Implement the foundational conversion logic to handle basic text elements (paragraphs, line breaks). Note: MVP will ignore complex elements like images, tables, and multi-column layouts to ensure stability.
+Advanced Conversion Logic:
+Integrate pdf.js and docx.js with comprehensive parsing capabilities.
+Implement professional-grade conversion logic to handle:
+- Text elements with formatting preservation (paragraphs, line breaks, fonts, styles)
+- Image extraction and embedding (JPEG, PNG, TIFF formats)
+- Table structure detection and recreation with proper cell alignment
+- Basic vector graphics processing where feasible
+- Multi-column layout detection and conversion
 UI State Management:
 Implement visual states for: idle, file-selected, processing, success, error.
 Create loading indicators and success/error messages.
@@ -108,6 +113,12 @@ High search volume (~3M/mo for "pdf to word") indicates strong, sustained demand
 Reddit and other forums show user frustration with existing tools' formatting errors, hidden paywalls, and privacy invasions.
 A client-side-only approach is a significant technical and marketing differentiator that directly addresses user privacy concerns.
 Technical Specifications
-The conversion engine will initially focus on extracting text nodes from the parsed PDF. It will attempt to preserve paragraphs and line breaks.
-Any images, tables, or vector graphics encountered in the PDF will be ignored by the MVP engine to prevent conversion errors. The output will be text-only.
+The conversion engine will comprehensively extract and convert PDF content including:
+- Text nodes with preserved paragraphs and line breaks
+- Embedded images (JPEG, PNG, TIFF) converted to standard formats
+- Table structures with proper cell alignment and formatting
+- Basic vector graphics where possible
+- Font styling and formatting preservation
+
+The enhanced engine provides professional-quality conversions that maintain the visual and structural integrity of the original PDF document.
 </PRD>
